@@ -1,0 +1,17 @@
+{
+  "name": "ivy-resort-api",
+  "version": "1.0.0",
+  "description": "API functions for Ivy Resort email service",
+  "main": "send-email.js",
+  "dependencies": {
+    "nodemailer": "^6.9.7"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+
+
+
+
+

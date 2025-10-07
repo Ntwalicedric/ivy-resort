@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gmail Connection Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body>
+    <h1>Gmail Connection Test</h1>
+    <button onclick="testGmailConnection()">Test Gmail Connection</button>
+    <div id="result"></div>
+
+    <script>
+        // Initialize EmailJS
+        emailjs.init('EnfzHuKwjR3SE_xqv');
+
+        async function testGmailConnection() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing Gmail connection...';
+
+            try {
+                // Test with minimal template
+                const templateParams = {
+                    to_email: 'cedricntwali0@gmail.com',
+                    guest_name: 'Test User',
+                    confirmation_id: 'TEST-123',
+                    room_name: 'Test Room',
+                    check_in_date: '2024-01-15',
+                    check_out_date: '2024-01-18',
+                    total_amount: '300',
+                    special_requests: 'Test request',
+                    current_date: new Date().toLocaleString()
+                };
+
+                console.log('Testing Gmail connection with params:', templateParams);
+
+                const result = await emailjs.send(
+                    'service_udxi846',
+                    'template_dq18wwh',
+                    templateParams
+                );
+
+                console.log('Gmail test result:', result);
+                resultDiv.innerHTML = `✅ Gmail connection successful! Status: ${result.status}`;
+            } catch (error) {
+                console.error('Gmail connection error:', error);
+                resultDiv.innerHTML = `❌ Gmail connection failed: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

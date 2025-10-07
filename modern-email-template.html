@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation - Ivy Resort</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .header-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 12px;
+        }
+        
+        .header-subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+        }
+        
+        /* Confirmation ID */
+        .confirmation-badge {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 20px;
+            margin: 30px;
+            border-radius: 12px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .confirmation-badge::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        }
+        
+        .confirmation-label {
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .confirmation-id {
+            font-size: 28px;
+            font-weight: 700;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            letter-spacing: 2px;
+        }
+        
+        /* Content */
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .greeting {
+            font-size: 18px;
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+        
+        .message {
+            font-size: 16px;
+            color: #6b7280;
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+        
+        /* Important notice */
+        .important-notice {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-left: 4px solid #f59e0b;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        
+        .important-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #92400e;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .important-title::before {
+            content: '⚠️';
+            margin-right: 8px;
+        }
+        
+        .important-text {
+            font-size: 14px;
+            color: #92400e;
+            line-height: 1.6;
+        }
+        
+        /* Details table */
+        .details-section {
+            margin: 40px 0;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title::before {
+            content: '📋';
+            margin-right: 10px;
+        }
+        
+        .details-grid {
+            display: grid;
+            gap: 16px;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .detail-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .detail-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            text-align: right;
+        }
+        
+        .price {
+            color: #10b981;
+            font-size: 20px;
+        }
+        
+        /* Contact section */
+        .contact-section {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            padding: 30px;
+            border-radius: 12px;
+            margin: 40px 0;
+        }
+        
+        .contact-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #0c4a6e;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .contact-title::before {
+            content: '📞';
+            margin-right: 10px;
+        }
+        
+        .contact-info {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #0c4a6e;
+        }
+        
+        .contact-item::before {
+            content: '•';
+            margin-right: 8px;
+            font-weight: bold;
+        }
+        
+        /* Next steps */
+        .next-steps {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            padding: 30px;
+            border-radius: 12px;
+            margin: 40px 0;
+        }
+        
+        .next-steps-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #166534;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .next-steps-title::before {
+            content: '✅';
+            margin-right: 10px;
+        }
+        
+        .steps-list {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+        
+        .step-item {
+            counter-increment: step-counter;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #166534;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .step-item::before {
+            content: counter(step-counter);
+            background: #10b981;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #1f2937;
+            color: #9ca3af;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .footer-brand {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+        }
+        
+        .footer-tagline {
+            font-size: 14px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+        
+        .footer-info {
+            font-size: 12px;
+            opacity: 0.6;
+            line-height: 1.5;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .logo {
+                font-size: 28px;
+            }
+            
+            .header-title {
+                font-size: 20px;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .confirmation-badge {
+                margin: 20px;
+                padding: 16px;
+            }
+            
+            .confirmation-id {
+                font-size: 24px;
+            }
+            
+            .detail-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .detail-value {
+                text-align: left;
+            }
+            
+            .contact-section,
+            .next-steps {
+                padding: 20px;
+            }
+            
+            .footer {
+                padding: 30px 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 25px 15px;
+            }
+            
+            .content {
+                padding: 25px 15px;
+            }
+            
+            .confirmation-badge {
+                margin: 15px;
+                padding: 15px;
+            }
+            
+            .confirmation-id {
+                font-size: 20px;
+            }
+            
+            .contact-section,
+            .next-steps {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="logo">🏨 Ivy Resort</div>
+                <div class="header-title">Booking Confirmed!</div>
+                <div class="header-subtitle">Your reservation is ready</div>
+            </div>
+        </div>
+        
+        <!-- Confirmation ID -->
+        <div class="confirmation-badge">
+            <div class="confirmation-label">Confirmation Number</div>
+            <div class="confirmation-id">{{confirmation_id}}</div>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <div class="greeting">Dear {{guest_name}},</div>
+            
+            <div class="message">
+                Thank you for choosing Ivy Resort! We're thrilled to confirm your reservation and look forward to providing you with an exceptional stay experience. Your booking details are below.
+            </div>
+            
+            <!-- Important Notice -->
+            <div class="important-notice">
+                <div class="important-title">Important Information</div>
+                <div class="important-text">
+                    Please save this confirmation email and bring your Confirmation Number with you to check-in. This serves as your booking reference and is required for any modifications to your reservation.
+                </div>
+            </div>
+            
+            <!-- Reservation Details -->
+            <div class="details-section">
+                <div class="section-title">Reservation Details</div>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">Room Type</div>
+                        <div class="detail-value">{{room_name}}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Check-in Date</div>
+                        <div class="detail-value">{{check_in_date}}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Check-out Date</div>
+                        <div class="detail-value">{{check_out_date}}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Total Amount</div>
+                        <div class="detail-value price">${{total_amount}}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Special Requests</div>
+                        <div class="detail-value">{{special_requests}}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact Information -->
+            <div class="contact-section">
+                <div class="contact-title">Need Help?</div>
+                <div class="contact-info">
+                    <div class="contact-item">Email: ivyresort449@gmail.com</div>
+                    <div class="contact-item">Phone: +1 (555) 123-4567</div>
+                    <div class="contact-item">Website: www.ivyresort.com</div>
+                </div>
+            </div>
+            
+            <!-- Next Steps -->
+            <div class="next-steps">
+                <div class="next-steps-title">What's Next?</div>
+                <ol class="steps-list">
+                    <li class="step-item">Save this confirmation email for your records</li>
+                    <li class="step-item">Arrive at the hotel on your check-in date</li>
+                    <li class="step-item">Present your Confirmation Number at check-in</li>
+                    <li class="step-item">Enjoy your stay at Ivy Resort!</li>
+                </ol>
+            </div>
+            
+            <div class="message">
+                We look forward to welcoming you and providing you with an exceptional stay at Ivy Resort. Thank you for choosing us!
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-brand">Ivy Resort</div>
+            <div class="footer-tagline">Your Gateway to Luxury and Comfort</div>
+            <div class="footer-info">
+                This is an automated confirmation email. Please keep this for your records.<br>
+                Generated on {{current_date}}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

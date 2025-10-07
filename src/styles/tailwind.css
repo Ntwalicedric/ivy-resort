@@ -1,0 +1,244 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Core Colors - Mirroring hero SVG (gold sun, ocean blues, sand) */
+    --color-background: #F7F6F2; /* light sand */
+    --color-foreground: #1F2937; /* slate-800 for strong contrast */
+    --color-border: rgba(31, 41, 55, 0.12); /* subtle dark border */
+    --color-input: #FFFFFF; /* white inputs on sand bg */
+    --color-ring: #FFD700; /* gold focus ring */
+
+    /* Card Colors */
+    --color-card: #FFFFFF; /* white cards */
+    --color-card-foreground: #1F2937; /* slate text */
+
+    /* Popover Colors */
+    --color-popover: #FFFFFF;
+    --color-popover-foreground: #1F2937;
+
+    /* Muted Colors */
+    --color-muted: #E5E7EB; /* gray-200 */
+    --color-muted-foreground: #4B5563; /* gray-600 */
+
+    /* Primary Colors - Deep Ocean Blue */
+    --color-primary: #1D4ED8; /* blue-700 */
+    --color-primary-foreground: #FFFFFF;
+
+    /* Secondary Colors - Burgundy accents */
+    --color-burgundy: #800020; /* classic burgundy */
+    --color-secondary: #800020; /* burgundy */
+    --color-secondary-foreground: #FFFFFF; /* white for contrast */
+
+    /* Accent Colors - Gold (sun) */
+    --color-accent: #FFD700; /* gold */
+    --color-accent-foreground: #111827; /* near-black for contrast */
+
+    /* Success/Warning/Error */
+    --color-success: #10B981; /* emerald-500 */
+    --color-success-foreground: #052e1b;
+    --color-warning: #F59E0B; /* amber-500 */
+    --color-warning-foreground: #1F2937;
+    --color-error: #DC2626; /* red-600 */
+    --color-error-foreground: #FFFFFF;
+    --color-destructive: #B91C1C; /* red-700 */
+    --color-destructive-foreground: #FFFFFF;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply overflow-x-hidden;
+  }
+
+  body {
+    @apply bg-background text-foreground overflow-x-hidden;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  #root, .app-root {
+    @apply overflow-x-hidden max-w-full;
+  }
+
+  img, video, svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+  }
+
+  body, p, span, div, button, input, textarea, select {
+    font-family: 'Inter', sans-serif;
+  }
+
+  .font-caption {
+    font-family: 'Source Sans Pro', sans-serif;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  .luxury-shadow {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .luxury-shadow-hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  }
+
+  .smooth-transition {
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .smooth-transition-slow {
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .backdrop-blur-luxury {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  /* Enhanced Button Hover Effects */
+  .btn-hover-lift {
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.28); /* gold */
+  }
+
+  .btn-hover-glow {
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-hover-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 500ms;
+  }
+
+  .btn-hover-glow:hover::before {
+    left: 100%;
+  }
+
+  .btn-hover-glow:hover {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.45); /* gold */
+  }
+
+  /* Card Hover Effects */
+  .card-hover {
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Text Hover Effects */
+  .text-hover-glow {
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .text-hover-glow:hover {
+    text-shadow: 0 0 8px rgba(29, 78, 216, 0.5); /* ocean blue glow */
+  }
+
+  /* Card Hover Effect */
+  .card-hover-pop {
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-hover-pop:hover {
+    transform: scale(1.25) translateY(-24px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Pulse Animation */
+  .pulse-coral {
+    animation: pulse-gold 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-gold {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+      box-shadow: 0 0 0 10px rgba(255, 215, 0, 0.15);
+    }
+  }
+
+  /* Hide horizontal scrollbar helper */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* React Datepicker theming to burgundy (secondary) */
+  .react-datepicker--mobile {
+    width: 100%;
+  }
+  .react-datepicker {
+    font-family: 'Inter', sans-serif;
+    border-color: var(--color-border);
+    background: var(--color-popover);
+    color: var(--color-popover-foreground);
+  }
+  .react-datepicker__header {
+    background: var(--color-popover);
+    border-bottom-color: var(--color-border);
+  }
+  .react-datepicker__current-month,
+  .react-datepicker-time__header,
+  .react-datepicker-year-header {
+    color: var(--color-foreground);
+  }
+  .react-datepicker__day-name {
+    color: var(--color-muted-foreground);
+  }
+  .react-datepicker__navigation-icon::before {
+    border-color: var(--color-foreground);
+  }
+  /* Selected and range colors */
+  .react-datepicker__day--selected,
+  .react-datepicker__day--keyboard-selected,
+  .react-datepicker__day--range-start,
+  .react-datepicker__day--range-end {
+    background-color: var(--color-secondary) !important;
+    color: var(--color-secondary-foreground) !important;
+  }
+  .react-datepicker__day--in-range,
+  .react-datepicker__day--in-selecting-range {
+    background-color: color-mix(in oklab, var(--color-secondary) 18%, white) !important;
+    color: var(--color-foreground) !important;
+  }
+  .react-datepicker__day--outside-month {
+    color: rgba(31, 41, 55, 0.35);
+  }
+  .react-datepicker__day:hover {
+    background-color: color-mix(in oklab, var(--color-secondary) 25%, white) !important;
+  }
+}
