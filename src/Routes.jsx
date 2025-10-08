@@ -33,7 +33,7 @@ const Routes = () => {
         <Suspense fallback={<LoadingSpinner />}>
           <RouterRoutes>
             {/* Define your route here */}
-            <Route path="/" element={<TestHomepage />} />
+            <Route path="/" element={<Homepage />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/contact" element={<ContactPage />} />
