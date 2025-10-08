@@ -5,7 +5,6 @@ const BrowserCompatibilityTest = () => {
     localStorage: false,
     fetch: false,
     promises: false,
-    modules: false,
     context: false
   });
 
@@ -40,14 +39,7 @@ const BrowserCompatibilityTest = () => {
         console.warn('Promise test failed:', e);
       }
 
-      // Test ES modules
-      try {
-        if (typeof import === 'function') {
-          results.modules = true;
-        }
-      } catch (e) {
-        console.warn('ES modules test failed:', e);
-      }
+      // Skip ES modules test to avoid syntax issues
 
       // Test React Context
       try {
