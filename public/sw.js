@@ -3,7 +3,7 @@ const CACHE_NAME = 'ivy-resort-v1';
 const urlsToCache = [
   '/',
   '/assets/images/undraw_beach-day_cnsv.svg',
-  '/about-hero.mp4',
+  '/About-Hero.mp4',
   '/assets/images/no_image.png',
   '/manifest.json'
 ];

@@ -17,7 +17,7 @@ const HeroSection = () => {
           className="w-full h-full object-cover"
           poster="/assets/images/about-hero-poster.jpg"
         >
-          <source src="/about-hero.mp4" type="video/mp4" />
+          <source src="/About-Hero.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         
