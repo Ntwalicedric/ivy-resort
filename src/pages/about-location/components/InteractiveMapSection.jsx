@@ -162,6 +162,8 @@ const InteractiveMapSection = () => {
                 referrerPolicy="no-referrer-when-downgrade"
                 src={mapSrc}
                 className="border-0"
+                allowFullScreen
+                frameBorder="0"
               />
               
               {/* Custom Overlay with POIs */}

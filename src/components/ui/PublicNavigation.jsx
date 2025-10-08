@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Icon from '../AppIcon';
-// import logo from '/ivy-resort-high-resolution-logo-grayscale-transparent.png';
+import Image from '../AppImage';
+import logo from '/ivy-resort-high-resolution-logo-grayscale-transparent.png';
 import Button from './Button';
 import Select from './Select';
 import { useCurrency } from '../../context/CurrencyContext';
@@ -68,9 +69,12 @@ const PublicNavigation = ({ className = '' }) => {
             onClick={() => handleNavigation('/')}
           >
             <div className="flex items-center space-x-2">
-              <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">IR</span>
-              </div>
+              <Image
+                src={logo}
+                alt="Ivy Resort"
+                className="h-8 w-auto"
+              />
+              <span className="font-bold text-xl text-primary">Ivy Resort</span>
             </div>
           </div>
 
