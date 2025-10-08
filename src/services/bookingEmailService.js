@@ -69,7 +69,7 @@ class BookingEmailService {
     console.log('📧 Trying serverless function...');
     
     try {
-      const base = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_EMAIL_API_URL) || 'http://localhost:3001/api';
+      const base = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_EMAIL_API_URL) || '/api';
       const response = await fetch(`${base}/send-email`, {
         method: 'POST',
         headers: {

@@ -238,10 +238,10 @@ const sendConfirmationEmail = async (reservation) => {
     };
   }
   
-  // Method 1: Use Vite integrated server (runs automatically with npm start)
+  // Method 1: Use Vercel serverless function
   try {
-    console.log('📧 API: Sending email via Vite server...');
-    const response = await fetch('http://localhost:4028/api/send-email', {
+    console.log('📧 API: Sending email via Vercel serverless function...');
+    const response = await fetch('/api/send-email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -250,14 +250,14 @@ const sendConfirmationEmail = async (reservation) => {
     });
     
     const result = await response.json();
-    console.log(`📧 API: Vite server result:`, result);
+    console.log(`📧 API: Vercel serverless function result:`, result);
     
     if (result.success) {
-      console.log('📧 API: Email sent successfully via Vite server!');
+      console.log('📧 API: Email sent successfully via Vercel serverless function!');
       return result;
     }
   } catch (error) {
-    console.warn('📧 API: Vite server failed:', error.message);
+    console.warn('📧 API: Vercel serverless function failed:', error.message);
   }
   
   // EmailJS fallback removed to avoid inconsistent templates
@@ -266,7 +266,7 @@ const sendConfirmationEmail = async (reservation) => {
   return {
     success: false,
     error: 'All email methods failed',
-    message: 'Automatic email sending failed. Both Vite server and EmailJS are unavailable.'
+    message: 'Automatic email sending failed. Vercel serverless function is unavailable.'
   };
 };
 

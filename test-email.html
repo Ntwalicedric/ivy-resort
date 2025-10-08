@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Email Function</title>
+</head>
+<body>
+    <h1>Test Email Function</h1>
+    <button onclick="testEmail()">Test Email</button>
+    <div id="result"></div>
+
+    <script>
+        async function testEmail() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                const response = await fetch('/api/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        reservation: {
+                            email: 'ivyresort449@gmail.com',
+                            guestName: 'Test User',
+                            confirmationId: 'TEST123',
+                            roomName: 'Test Room',
+                            checkIn: '2024-01-01',
+                            checkOut: '2024-01-02',
+                            totalAmountDisplay: 'RWF 100,000',
+                            currency: 'RWF',
+                            totalAmountInCurrency: 100000,
+                            specialRequests: 'Test booking'
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } catch (error) {
+                resultDiv.innerHTML = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
