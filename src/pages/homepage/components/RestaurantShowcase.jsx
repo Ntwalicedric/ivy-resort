@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+// import { motion } from 'framer-motion';
 import Image from '../../../components/AppImage';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
@@ -82,11 +82,11 @@ const RestaurantShowcase = () => {
     <section className="py-16 lg:py-24 bg-muted/30 overflow-x-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <div
+          }
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+          }
           className="text-center mb-16"
         >
           <div className="inline-flex items-center space-x-2 bg-secondary/10 px-4 py-2 rounded-full mb-6">
@@ -101,14 +101,14 @@ const RestaurantShowcase = () => {
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Elevate your dining experience at our rooftop restaurant, where world-class cuisine meets breathtaking panoramic views of Rwanda's stunning landscape.
           </p>
-        </motion.div>
+        </div>
 
         {/* Tab Navigation */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <div
+          }
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          }
           className="flex justify-center mb-12"
         >
           <div className="bg-card rounded-xl p-2 luxury-shadow max-w-full">
@@ -129,16 +129,16 @@ const RestaurantShowcase = () => {
               ))}
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Tab Content */}
         <div className="min-h-[600px]">
           {/* Overview Tab */}
           {activeTab === 'overview' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+            <div
+              }
+              }
+              }
               className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
             >
               <div className="space-y-8">
@@ -210,23 +210,23 @@ const RestaurantShowcase = () => {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           )}
 
           {/* Cuisines Tab */}
           {activeTab === 'cuisines' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+            <div
+              }
+              }
+              }
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
             >
               {cuisineTypes?.map((cuisine, index) => (
-                <motion.div
+                <div
                   key={cuisine?.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  }
+                  }
+                  }
                   className="group bg-card rounded-2xl overflow-hidden luxury-shadow hover:luxury-shadow-hover smooth-transition"
                 >
                   <div className="relative h-48 overflow-hidden">
@@ -263,9 +263,9 @@ const RestaurantShowcase = () => {
                       </Button>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
+            </div>
           )}
 
         </div>

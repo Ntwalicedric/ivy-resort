@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+// import { motion,  } from 'framer-motion';
 import Image from '../../../components/AppImage';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
@@ -108,11 +108,11 @@ const TestimonialsCarousel = () => {
     <section className="py-16 lg:py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <div
+          }
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+          }
           className="text-center mb-16"
         >
           <div className="inline-flex items-center space-x-2 bg-success/10 px-4 py-2 rounded-full mb-6">
@@ -127,17 +127,17 @@ const TestimonialsCarousel = () => {
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Discover why travelers from around the world choose Ivy Resort for their Lake Kivu experience. Read verified reviews from our valued guests.
           </p>
-        </motion.div>
+        </div>
 
         {/* Main Testimonial Display */}
         <div className="relative max-w-5xl mx-auto">
-          <AnimatePresence mode="wait">
-            <motion.div
+          < mode="wait">
+            <div
               key={currentTestimonial}
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
+              }
+              }
               exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.6, ease: "easeInOut" }}
+              }
               className="bg-card rounded-3xl p-8 lg:p-12 luxury-shadow"
             >
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
@@ -212,8 +212,8 @@ const TestimonialsCarousel = () => {
                   )}
                 </div>
               </div>
-            </motion.div>
-          </AnimatePresence>
+            </div>
+          </>
 
           {/* Navigation Controls */}
           <div className="absolute top-1/2 -left-4 transform -translate-y-1/2 hidden lg:block">
@@ -270,11 +270,11 @@ const TestimonialsCarousel = () => {
         </div>
 
         {/* Review Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <div
+          }
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          }
           className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 text-center"
         >
           <div>
@@ -293,7 +293,7 @@ const TestimonialsCarousel = () => {
             <div className="font-heading text-3xl font-bold text-primary mb-2">95%</div>
             <div className="text-muted-foreground">Return Guests</div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+// import { motion } from 'framer-motion';
 import Image from '../../../components/AppImage';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
@@ -65,11 +65,11 @@ const FeaturedRooms = ({ onBookingClick }) => {
     <section className="py-16 lg:py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <div
+          }
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+          }
           className="text-center mb-16"
         >
           <div className="inline-flex items-center space-x-2 bg-secondary/10 px-4 py-2 rounded-full mb-6">
@@ -84,10 +84,10 @@ const FeaturedRooms = ({ onBookingClick }) => {
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Each thoughtfully designed accommodation offers stunning views, modern amenities, and the comfort you deserve for an unforgettable Lake Kivu experience.
           </p>
-        </motion.div>
+        </div>
 
         {/* Room Cards Grid */}
-        <motion.div
+        <div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -95,7 +95,7 @@ const FeaturedRooms = ({ onBookingClick }) => {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           {roomCategories?.map((room) => (
-            <motion.div
+            <div
               key={room?.id}
               variants={cardVariants}
               onMouseEnter={() => setHoveredRoom(room?.id)}
@@ -194,9 +194,9 @@ const FeaturedRooms = ({ onBookingClick }) => {
                   </Button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
 
         {/* Details Modal */}
         {detailsRoom && (
@@ -255,11 +255,11 @@ const FeaturedRooms = ({ onBookingClick }) => {
         )}
 
         {/* View All Rooms CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <div
+          }
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          }
           className="text-center mt-12"
         >
           <Button
@@ -272,7 +272,7 @@ const FeaturedRooms = ({ onBookingClick }) => {
           >
             Explore All Accommodations
           </Button>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

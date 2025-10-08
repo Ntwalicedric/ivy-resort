@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+// import { motion } from 'framer-motion';
 import Image from '../../../components/AppImage';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
@@ -77,11 +77,11 @@ const LocationHighlights = () => {
     <section className="py-16 lg:py-24 bg-muted/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <div
+          }
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+          }
           className="text-center mb-16">
 
           <div className="inline-flex items-center space-x-2 bg-secondary/10 px-4 py-2 rounded-full mb-6">
@@ -96,16 +96,16 @@ const LocationHighlights = () => {
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Nestled on the shores of Lake Kivu, Ivy Resort offers unparalleled access to Rwanda's most spectacular natural attractions and cultural experiences.
           </p>
-        </motion.div>
+        </div>
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
           {/* Interactive Map Section */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
+          <div
+            }
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            }
             className="space-y-8">
 
             <div className="bg-card rounded-2xl p-6 luxury-shadow">
@@ -183,14 +183,14 @@ const LocationHighlights = () => {
                 )}
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Highlights Showcase */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
+          <div
+            }
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            }
             className="space-y-6">
 
             {/* Active Highlight Display */}
@@ -276,15 +276,15 @@ const LocationHighlights = () => {
                 </button>
               )}
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* Transportation & Access */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        <div
+          }
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          }
           className="bg-card rounded-2xl p-8 luxury-shadow">
 
           <div className="text-center mb-8">
@@ -333,7 +333,7 @@ const LocationHighlights = () => {
               </Button>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>);
 
