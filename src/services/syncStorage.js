@@ -3,7 +3,7 @@ class SyncStorageService {
   constructor() {
     this.syncKey = 'ivy_resort_sync_data';
     this.lastSyncKey = 'ivy_resort_last_sync';
-    this.syncInterval = 10000; // 10 seconds for testing
+    this.syncInterval = 10000; // 10 seconds
     this.isOnline = navigator.onLine;
     this.syncListeners = [];
     

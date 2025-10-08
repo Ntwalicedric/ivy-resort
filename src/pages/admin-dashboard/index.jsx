@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useDatabase } from '../../context/DatabaseContext';
 import { ProtectedRoute, useAuth } from '../../components/ui/AuthenticationGuard';
 import useRWFConversion from '../../hooks/useRWFConversion';
-import SyncStatus from '../../components/SyncStatus';
 
 // Elegant notification styles
 const notificationStyles = `
@@ -136,7 +135,7 @@ const AdminDashboard = () => {
 
   // Auto-refresh functionality
   useEffect(() => {
-    // Set up auto-refresh every 30 seconds
+    // Set up auto-refresh every 10 seconds
     const refreshInterval = setInterval(() => {
       console.log('Dashboard: Auto-refreshing data...');
       setIsAutoRefreshing(true);
@@ -146,7 +145,7 @@ const AdminDashboard = () => {
       }).catch(() => {
         setIsAutoRefreshing(false);
       });
-    }, 30000); // 30 seconds
+    }, 10000); // 10 seconds
 
     // Cleanup interval on component unmount
     return () => {
@@ -621,9 +620,8 @@ const AdminDashboard = () => {
                     </p>
                     <div className="flex items-center space-x-1 text-xs text-slate-400">
                       <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                      <span>Auto-refresh every 30s</span>
+                      <span>Auto-refresh every 10s</span>
                     </div>
-                    <SyncStatus />
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3">
