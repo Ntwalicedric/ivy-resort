@@ -74,7 +74,6 @@ const PublicNavigation = ({ className = '' }) => {
                 alt="Ivy Resort"
                 className="h-8 w-auto"
               />
-              <span className="font-bold text-xl text-primary">Ivy Resort</span>
             </div>
           </div>
 
