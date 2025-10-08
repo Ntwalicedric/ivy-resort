@@ -3,9 +3,9 @@
   "name": "ivy-resort",
   "icons": [
     {
-      "src": "/ivy-resort-high-resolution-logo-grayscale-transparent.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
     }
   ],
   "start_url": ".",
