@@ -13,13 +13,24 @@ const HeroSection = () => {
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
           className="w-full h-full object-cover"
-          poster="/assets/images/about-hero-poster.jpg"
+          onError={(e) => console.error('Video error:', e)}
+          onLoadStart={() => console.log('Video loading started')}
+          onCanPlay={() => console.log('Video can play')}
+          onLoadedData={() => console.log('Video data loaded')}
         >
           <source src="/About-Hero.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
+        
+        {/* Fallback background image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: "url('/assets/images/Lake_Kivu_Shores.jpg')"
+          }}
+        ></div>
         
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60"></div>
