@@ -61,7 +61,7 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "vite build --sourcemap",
+    "build": "cross-env REACT_APP_BUILD_TIME=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" vite build --sourcemap",
     "serve": "vite preview"
   },
   "eslintConfig": {
@@ -90,6 +90,7 @@
     "@vitejs/plugin-react": "4.3.4",
     "autoprefixer": "10.4.2",
     "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
     "nodemailer": "^6.10.1",
     "postcss": "8.4.8",
     "tailwindcss": "3.4.6",

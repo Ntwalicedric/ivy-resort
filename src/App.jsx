@@ -4,6 +4,8 @@ import { AuthProvider } from "./components/ui/AuthenticationGuard";
 import { CurrencyProvider } from "./context/CurrencyContext";
 import { DatabaseProvider } from "./context/DatabaseContext";
 import BrowserCompatibilityTest from "./components/BrowserCompatibilityTest";
+import CacheDetector from "./components/CacheDetector";
+import { checkForUpdates, showCacheUpdateNotification } from "./utils/versionManager";
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -19,6 +21,17 @@ function App() {
       localStorage: typeof window.localStorage,
       sessionStorage: typeof window.sessionStorage
     });
+
+    // Check for app updates and handle cache issues
+    try {
+      const hasUpdated = checkForUpdates();
+      if (hasUpdated) {
+        console.log('App: Version updated, showing refresh notification');
+        showCacheUpdateNotification();
+      }
+    } catch (error) {
+      console.warn('App: Version check failed:', error);
+    }
 
     // Add a small delay to ensure DOM is ready
     const timer = setTimeout(() => {
@@ -93,6 +106,7 @@ function App() {
       <CurrencyProvider>
         <DatabaseProvider>
           <BrowserCompatibilityTest />
+          <CacheDetector />
           <Routes />
         </DatabaseProvider>
       </CurrencyProvider>
