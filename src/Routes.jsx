@@ -6,7 +6,6 @@ import NotFound from "pages/NotFound";
 
 // Import Homepage directly to fix root path issue
 import Homepage from './pages/homepage';
-import SimpleHomepage from './pages/homepage/SimpleHomepage';
 
 // Lazy load other pages for better performance
 const AboutLocationPage = lazy(() => import('./pages/about-location'));
