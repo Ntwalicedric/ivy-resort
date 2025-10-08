@@ -4,7 +4,7 @@ import useRWFConversion from '../../../hooks/useRWFConversion';
 // CSS for elegant action buttons and table styling
 const actionButtonStyles = `
   .action-btn {
-    @apply px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-300 border-2 shadow-sm;
+    @apply px-2 sm:px-3 lg:px-4 py-1 sm:py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-300 border-2 shadow-sm;
     position: relative;
     overflow: hidden;
     letter-spacing: 0.025em;
@@ -14,17 +14,35 @@ const actionButtonStyles = `
     transform: translateY(0);
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 3px;
+  }
+  
+  @media (min-width: 640px) {
+    .action-btn {
+      gap: 6px;
+    }
   }
 
   .action-icon {
-    font-size: 16px;
+    font-size: 12px;
     line-height: 1;
+  }
+  
+  @media (min-width: 640px) {
+    .action-icon {
+      font-size: 16px;
+    }
   }
 
   .action-text {
-    font-size: 13px;
+    font-size: 10px;
     font-weight: 500;
+  }
+  
+  @media (min-width: 640px) {
+    .action-text {
+      font-size: 13px;
+    }
   }
   
   .action-btn:hover {
@@ -300,37 +318,37 @@ const EnhancedReservationTable = ({
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full enhanced-table">
+      <div className="overflow-x-auto -mx-4 sm:mx-0">
+        <table className="w-full enhanced-table min-w-[800px] sm:min-w-0">
           <thead className="bg-gradient-to-r from-slate-50/80 to-blue-50/80">
             <tr>
-              <th className="px-8 py-4 text-left">
+              <th className="px-2 sm:px-4 lg:px-8 py-3 sm:py-4 text-left">
                 <input
                   type="checkbox"
                   checked={selectedReservations.length === reservations.length && reservations.length > 0}
                   onChange={onSelectAll}
-                  className="rounded-xl border-gray-300 w-4 h-4"
+                  className="rounded-xl border-gray-300 w-3 h-3 sm:w-4 sm:h-4"
                 />
               </th>
-              <th className="px-8 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+              <th className="px-2 sm:px-4 lg:px-8 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
                 <SortButton field="guestName">Guest</SortButton>
               </th>
-              <th className="px-8 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+              <th className="px-2 sm:px-4 lg:px-8 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
                 <SortButton field="roomNumber">Room ID</SortButton>
               </th>
-              <th className="px-8 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+              <th className="px-2 sm:px-4 lg:px-8 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider hidden sm:table-cell">
                 <SortButton field="checkIn">Check-in</SortButton>
               </th>
-              <th className="px-8 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+              <th className="px-2 sm:px-4 lg:px-8 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider hidden sm:table-cell">
                 <SortButton field="checkOut">Check-out</SortButton>
               </th>
-              <th className="px-8 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+              <th className="px-2 sm:px-4 lg:px-8 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
                 <SortButton field="totalAmount">Amount</SortButton>
               </th>
-              <th className="px-8 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+              <th className="px-2 sm:px-4 lg:px-8 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
                 <SortButton field="status">Status</SortButton>
               </th>
-              <th className="px-8 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+              <th className="px-2 sm:px-4 lg:px-8 py-3 sm:py-4 text-center text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -340,15 +358,15 @@ const EnhancedReservationTable = ({
               <tr key={reservation.id} className={`hover:bg-blue-50/50 transition-all duration-200 ${
                 reservation.status === 'checked-out' ? 'bg-slate-50/80 border-l-4 border-slate-300' : ''
               }`}>
-                <td className="px-8 py-6 whitespace-nowrap">
+                <td className="px-2 sm:px-4 lg:px-8 py-4 sm:py-6 whitespace-nowrap">
                   <input
                     type="checkbox"
                     checked={selectedReservations.includes(reservation.id)}
                     onChange={() => onBulkSelect(reservation.id)}
-                    className="rounded-xl border-gray-300 w-4 h-4"
+                    className="rounded-xl border-gray-300 w-3 h-3 sm:w-4 sm:h-4"
                   />
                 </td>
-                <td className="px-8 py-6 whitespace-nowrap">
+                <td className="px-2 sm:px-4 lg:px-8 py-4 sm:py-6 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-10 w-10">
                       <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
@@ -372,27 +390,27 @@ const EnhancedReservationTable = ({
                     </div>
                   </div>
                 </td>
-                <td className="px-8 py-6 whitespace-nowrap">
-                  <div className="room-info font-medium">{reservation.roomNumber || reservation.roomId}</div>
+                <td className="px-2 sm:px-4 lg:px-8 py-4 sm:py-6 whitespace-nowrap">
+                  <div className="room-info font-medium text-sm sm:text-base">{reservation.roomNumber || reservation.roomId}</div>
                 </td>
-                <td className="px-8 py-6 whitespace-nowrap">
-                  <div className="date-info flex items-center">
-                    <CalendarIcon className="h-4 w-4 mr-1" />
+                <td className="px-2 sm:px-4 lg:px-8 py-4 sm:py-6 whitespace-nowrap hidden sm:table-cell">
+                  <div className="date-info flex items-center text-sm">
+                    <CalendarIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                     {formatDate(reservation.checkIn)}
                   </div>
                 </td>
-                <td className="px-8 py-6 whitespace-nowrap">
-                  <div className="date-info flex items-center">
-                    <CalendarIcon className="h-4 w-4 mr-1" />
+                <td className="px-2 sm:px-4 lg:px-8 py-4 sm:py-6 whitespace-nowrap hidden sm:table-cell">
+                  <div className="date-info flex items-center text-sm">
+                    <CalendarIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                     {formatDate(reservation.checkOut)}
                   </div>
                 </td>
-                <td className="px-8 py-6 whitespace-nowrap">
-                  <div className="amount-info font-semibold text-lg">
+                <td className="px-2 sm:px-4 lg:px-8 py-4 sm:py-6 whitespace-nowrap">
+                  <div className="amount-info font-semibold text-sm sm:text-lg">
                     {formatCurrency(reservation.totalAmount)}
                   </div>
                 </td>
-                <td className="px-8 py-6 whitespace-nowrap">
+                <td className="px-2 sm:px-4 lg:px-8 py-4 sm:py-6 whitespace-nowrap">
                   <div className="flex flex-col space-y-1">
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border transition-all duration-300 ${getStatusColor(reservation.status)} ${
                       reservation.status === 'checked-out' ? 'shadow-md px-4 py-2' : ''
@@ -406,8 +424,8 @@ const EnhancedReservationTable = ({
                     )}
                   </div>
                 </td>
-                <td className="px-8 py-6 whitespace-nowrap text-sm font-medium">
-                  <div className="flex items-center space-x-2">
+                <td className="px-2 sm:px-4 lg:px-8 py-4 sm:py-6 whitespace-nowrap text-xs sm:text-sm font-medium">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
                     <button
                       onClick={() => onView(reservation)}
                       className="action-btn view-btn group"

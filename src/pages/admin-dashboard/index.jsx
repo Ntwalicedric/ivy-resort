@@ -601,22 +601,22 @@ const AdminDashboard = () => {
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
-          <div className="mb-8">
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="flex items-center space-x-3">
-                    <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">Reservation Management</h1>
+          <div className="mb-6 lg:mb-8">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl lg:rounded-3xl shadow-xl border border-white/30 p-4 sm:p-6 lg:p-8">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+                <div className="flex-1">
+                  <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
+                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">Reservation Management</h1>
                     {isAutoRefreshing && (
                       <div className="flex items-center space-x-2 text-blue-600">
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
-                        <span className="text-sm font-medium">Refreshing...</span>
+                        <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-blue-600"></div>
+                        <span className="text-xs sm:text-sm font-medium">Refreshing...</span>
                       </div>
                     )}
                   </div>
-                  <p className="text-slate-600 mt-3 text-lg">Manage client reservations and bookings with ease</p>
-                  <div className="flex items-center space-x-4 mt-2">
-                    <p className="text-sm text-slate-500">
+                  <p className="text-slate-600 mt-2 sm:mt-3 text-sm sm:text-base lg:text-lg">Manage client reservations and bookings with ease</p>
+                  <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4 mt-2">
+                    <p className="text-xs sm:text-sm text-slate-500">
                       Last updated: {lastRefreshTime.toLocaleTimeString()}
                     </p>
                     <div className="flex items-center space-x-1 text-xs text-slate-400">
@@ -625,7 +625,7 @@ const AdminDashboard = () => {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   <button
                     onClick={() => {
                       setIsAutoRefreshing(true);
@@ -639,39 +639,39 @@ const AdminDashboard = () => {
                       });
                     }}
                     disabled={isAutoRefreshing}
-                    className="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-2xl hover:from-green-700 hover:to-green-800 transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-gradient-to-r from-green-600 to-green-700 text-white px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl hover:from-green-700 hover:to-green-800 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm"
                   >
-                    <RefreshCw size={20} className={isAutoRefreshing ? 'animate-spin' : ''} />
-                    <span className="font-semibold">Refresh</span>
+                    <RefreshCw size={16} className={isAutoRefreshing ? 'animate-spin' : ''} />
+                    <span className="font-semibold hidden sm:inline">Refresh</span>
                   </button>
                   <button
                     onClick={() => setShowReportGenerator(true)}
-                    className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-2xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-xs sm:text-sm"
                   >
-                    <BarChart3 size={20} />
-                    <span className="font-semibold">Reports</span>
+                    <BarChart3 size={16} />
+                    <span className="font-semibold hidden sm:inline">Reports</span>
                   </button>
                   <button
                     onClick={handleClearAllReservations}
-                    className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-2xl hover:from-orange-600 hover:to-orange-700 transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl hover:from-orange-600 hover:to-orange-700 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-xs sm:text-sm"
                     title="Clear all reservations (for testing)"
                   >
-                    <span>🗑️</span>
-                    <span className="font-semibold">Clear All</span>
+                    <span className="text-sm">🗑️</span>
+                    <span className="font-semibold hidden sm:inline">Clear All</span>
                   </button>
                   <button
                     onClick={() => setShowCredentialsManager(true)}
-                    className="bg-gradient-to-r from-slate-600 to-slate-700 text-white px-6 py-3 rounded-2xl hover:from-slate-700 hover:to-slate-800 transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    className="bg-gradient-to-r from-slate-600 to-slate-700 text-white px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl hover:from-slate-700 hover:to-slate-800 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-xs sm:text-sm"
                   >
-                    <User size={20} />
-                    <span className="font-semibold">Credentials</span>
+                    <User size={16} />
+                    <span className="font-semibold hidden sm:inline">Credentials</span>
                   </button>
                   <button
                     onClick={handleLogout}
-                    className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-2xl hover:from-red-600 hover:to-red-700 transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    className="bg-gradient-to-r from-red-500 to-red-600 text-white px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl hover:from-red-600 hover:to-red-700 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-xs sm:text-sm"
                   >
-                    <LogOut size={20} />
-                    <span className="font-semibold">Logout</span>
+                    <LogOut size={16} />
+                    <span className="font-semibold hidden sm:inline">Logout</span>
                   </button>
                 </div>
               </div>
@@ -697,43 +697,43 @@ const AdminDashboard = () => {
           />
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 lg:mb-8">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl lg:rounded-3xl shadow-xl border border-white/30 p-4 sm:p-6 lg:p-8 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="text-center">
-                <div className="text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-2">
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-1 sm:mb-2">
                   {filteredReservations.length}
                 </div>
-                <div className="text-base text-slate-600 font-medium">
+                <div className="text-sm sm:text-base text-slate-600 font-medium">
                   Total Reservations
                 </div>
               </div>
             </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl lg:rounded-3xl shadow-xl border border-white/30 p-4 sm:p-6 lg:p-8 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="text-center">
-                <div className="text-4xl font-bold bg-gradient-to-r from-green-600 to-green-500 bg-clip-text text-transparent mb-2">
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-green-600 to-green-500 bg-clip-text text-transparent mb-1 sm:mb-2">
                   {filteredReservations.filter(r => r.status === 'confirmed').length}
                 </div>
-                <div className="text-base text-slate-600 font-medium">
+                <div className="text-sm sm:text-base text-slate-600 font-medium">
                   Confirmed
                 </div>
               </div>
             </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl lg:rounded-3xl shadow-xl border border-white/30 p-4 sm:p-6 lg:p-8 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="text-center">
-                <div className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent mb-2">
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent mb-1 sm:mb-2">
                   {filteredReservations.filter(r => r.status === 'checked-in').length}
                 </div>
-                <div className="text-base text-slate-600 font-medium">
+                <div className="text-sm sm:text-base text-slate-600 font-medium">
                   Checked In
                 </div>
               </div>
             </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl lg:rounded-3xl shadow-xl border border-white/30 p-4 sm:p-6 lg:p-8 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="text-center">
-                <div className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-purple-500 bg-clip-text text-transparent mb-2">
+                <div className="text-lg sm:text-2xl lg:text-4xl font-bold bg-gradient-to-r from-purple-600 to-purple-500 bg-clip-text text-transparent mb-1 sm:mb-2 break-words">
                   {formatRWF(filteredReservations.reduce((sum, r) => sum + (r.totalAmount || 0), 0))}
                 </div>
-                <div className="text-base text-slate-600 font-medium">
+                <div className="text-sm sm:text-base text-slate-600 font-medium">
                   Total Revenue
                 </div>
               </div>
