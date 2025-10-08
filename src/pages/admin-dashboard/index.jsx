@@ -85,7 +85,8 @@ import {
   XCircle,
   LogIn,
   AlertCircle,
-  BarChart3
+  BarChart3,
+  RefreshCw
 } from 'lucide-react';
 import EnhancedFilterPanel from './components/EnhancedFilterPanel';
 import EnhancedReservationTable from './components/EnhancedReservationTable';
@@ -133,6 +134,26 @@ const AdminDashboard = () => {
     refreshData();
   };
 
+  // Auto-refresh functionality
+  useEffect(() => {
+    // Set up auto-refresh every 30 seconds
+    const refreshInterval = setInterval(() => {
+      console.log('Dashboard: Auto-refreshing data...');
+      setIsAutoRefreshing(true);
+      refreshData().then(() => {
+        setIsAutoRefreshing(false);
+        setLastRefreshTime(new Date());
+      }).catch(() => {
+        setIsAutoRefreshing(false);
+      });
+    }, 30000); // 30 seconds
+
+    // Cleanup interval on component unmount
+    return () => {
+      clearInterval(refreshInterval);
+    };
+  }, [refreshData]);
+
   // Local state
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -152,6 +173,8 @@ const AdminDashboard = () => {
   const [showBulkActions, setShowBulkActions] = useState(false);
   const [showCredentialsManager, setShowCredentialsManager] = useState(false);
   const [showReportGenerator, setShowReportGenerator] = useState(false);
+  const [isAutoRefreshing, setIsAutoRefreshing] = useState(false);
+  const [lastRefreshTime, setLastRefreshTime] = useState(new Date());
 
   // Show notification
   const showNotification = (message, type = 'success') => {
@@ -582,10 +605,45 @@ const AdminDashboard = () => {
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 p-8">
               <div className="flex items-center justify-between">
                 <div>
-                  <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">Reservation Management</h1>
+                  <div className="flex items-center space-x-3">
+                    <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">Reservation Management</h1>
+                    {isAutoRefreshing && (
+                      <div className="flex items-center space-x-2 text-blue-600">
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                        <span className="text-sm font-medium">Refreshing...</span>
+                      </div>
+                    )}
+                  </div>
                   <p className="text-slate-600 mt-3 text-lg">Manage client reservations and bookings with ease</p>
+                  <div className="flex items-center space-x-4 mt-2">
+                    <p className="text-sm text-slate-500">
+                      Last updated: {lastRefreshTime.toLocaleTimeString()}
+                    </p>
+                    <div className="flex items-center space-x-1 text-xs text-slate-400">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <span>Auto-refresh every 30s</span>
+                    </div>
+                  </div>
                 </div>
                 <div className="flex items-center space-x-3">
+                  <button
+                    onClick={() => {
+                      setIsAutoRefreshing(true);
+                      refreshData().then(() => {
+                        setIsAutoRefreshing(false);
+                        setLastRefreshTime(new Date());
+                        showNotification('Data refreshed successfully!', 'success');
+                      }).catch(() => {
+                        setIsAutoRefreshing(false);
+                        showNotification('Failed to refresh data', 'error');
+                      });
+                    }}
+                    disabled={isAutoRefreshing}
+                    className="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-2xl hover:from-green-700 hover:to-green-800 transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <RefreshCw size={20} className={isAutoRefreshing ? 'animate-spin' : ''} />
+                    <span className="font-semibold">Refresh</span>
+                  </button>
                   <button
                     onClick={() => setShowReportGenerator(true)}
                     className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-2xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
