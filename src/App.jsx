@@ -3,19 +3,32 @@ import Routes from "./Routes";
 import { AuthProvider } from "./components/ui/AuthenticationGuard";
 import { CurrencyProvider } from "./context/CurrencyContext";
 import { DatabaseProvider } from "./context/DatabaseContext";
+import BrowserCompatibilityTest from "./components/BrowserCompatibilityTest";
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
+    // Add debugging info
+    console.log('App: Initializing...');
+    console.log('App: User Agent:', navigator.userAgent);
+    console.log('App: Browser features:', {
+      fetch: typeof window.fetch,
+      Promise: typeof window.Promise,
+      localStorage: typeof window.localStorage,
+      sessionStorage: typeof window.sessionStorage
+    });
+
     // Add a small delay to ensure DOM is ready
     const timer = setTimeout(() => {
+      console.log('App: Setting loaded state to true');
       setIsLoaded(true);
     }, 100);
 
     // Check for critical browser features
     if (!window.fetch || !window.Promise) {
+      console.error('App: Critical browser features missing');
       setHasError(true);
     }
 
@@ -79,6 +92,7 @@ function App() {
     <AuthProvider>
       <CurrencyProvider>
         <DatabaseProvider>
+          <BrowserCompatibilityTest />
           <Routes />
         </DatabaseProvider>
       </CurrencyProvider>
