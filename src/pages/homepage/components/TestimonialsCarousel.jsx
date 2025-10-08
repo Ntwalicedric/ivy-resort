@@ -277,7 +277,6 @@ const TestimonialsCarousel = () => {
             <div className="text-muted-foreground">Return Guests</div>
           </div>
         </div>
-      </div>
     </section>
   );
 };
