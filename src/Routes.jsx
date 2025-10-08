@@ -6,6 +6,7 @@ import NotFound from "pages/NotFound";
 
 // Import Homepage directly to fix root path issue
 import Homepage from './pages/homepage';
+import SimpleHomepage from './pages/homepage/SimpleHomepage';
 
 // Lazy load other pages for better performance
 const AboutLocationPage = lazy(() => import('./pages/about-location'));
@@ -27,22 +28,20 @@ const LoadingSpinner = () => (
 const Routes = () => {
   return (
     <BrowserRouter>
-      <ErrorBoundary>
-        <ScrollToTop />
-        <Suspense fallback={<LoadingSpinner />}>
-          <RouterRoutes>
-            {/* Define your route here */}
-            <Route path="/" element={<Homepage />} />
-            <Route path="/admin-dashboard" element={<AdminDashboard />} />
-            <Route path="/admin-login" element={<AdminLogin />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/about-location" element={<AboutLocationPage />} />
-            <Route path="/room-selection-booking" element={<RoomSelectionBooking />} />
-            <Route path="/homepage" element={<Homepage />} />
-            <Route path="*" element={<NotFound />} />
-          </RouterRoutes>
-        </Suspense>
-      </ErrorBoundary>
+      <ScrollToTop />
+      <Suspense fallback={<LoadingSpinner />}>
+        <RouterRoutes>
+          {/* Define your route here */}
+          <Route path="/" element={<SimpleHomepage />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/about-location" element={<AboutLocationPage />} />
+          <Route path="/room-selection-booking" element={<RoomSelectionBooking />} />
+          <Route path="/homepage" element={<Homepage />} />
+          <Route path="*" element={<NotFound />} />
+        </RouterRoutes>
+      </Suspense>
     </BrowserRouter>
   );
 };
