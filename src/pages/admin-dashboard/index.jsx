@@ -85,8 +85,7 @@ import {
   XCircle,
   LogIn,
   AlertCircle,
-  BarChart3,
-  RefreshCw
+  BarChart3
 } from 'lucide-react';
 import EnhancedFilterPanel from './components/EnhancedFilterPanel';
 import EnhancedReservationTable from './components/EnhancedReservationTable';
