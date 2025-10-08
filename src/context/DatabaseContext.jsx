@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { api, handleApiError } from '../services/api';
+import syncStorage from '../services/syncStorage';
 
 // Debug: Check if api object is properly imported (commented out for production)
 // console.log('DatabaseContext: Imported api object:', api);
@@ -204,7 +205,15 @@ export const DatabaseProvider = ({ children }) => {
       const response = await api.createReservation(reservationData);
       console.log('DatabaseContext: createReservation API response:', response);
       if (response.success) {
-        setReservations(prev => [response.data, ...prev]);
+        const newReservations = [response.data, ...reservations];
+        setReservations(newReservations);
+        
+        // Sync data across devices
+        syncStorage.setLocalData({
+          reservations: newReservations,
+          lastUpdated: Date.now()
+        });
+        
         return { 
           success: true, 
           data: response.data,
@@ -503,6 +512,17 @@ export const DatabaseProvider = ({ children }) => {
   
   // Load initial data on mount (defer heavy admin-only data on public pages)
   useEffect(() => {
+    // Initialize sync storage
+    syncStorage.initialize();
+    
+    // Add sync listener for cross-device updates
+    syncStorage.addSyncListener((syncedData) => {
+      if (syncedData && syncedData.reservations) {
+        console.log('DatabaseContext: Received sync update with', syncedData.reservations.length, 'reservations');
+        setReservations(syncedData.reservations);
+      }
+    });
+    
     const isAdminRoute = typeof window !== 'undefined' && window.location && window.location.pathname && window.location.pathname.startsWith('/admin');
     if (!isAdminRoute) {
       // Skip admin-heavy fetches on public pages to improve loading time

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDatabase } from '../../context/DatabaseContext';
 import { ProtectedRoute, useAuth } from '../../components/ui/AuthenticationGuard';
 import useRWFConversion from '../../hooks/useRWFConversion';
+import SyncStatus from '../../components/SyncStatus';
 
 // Elegant notification styles
 const notificationStyles = `
@@ -622,6 +623,7 @@ const AdminDashboard = () => {
                       <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                       <span>Auto-refresh every 30s</span>
                     </div>
+                    <SyncStatus />
                   </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3">
