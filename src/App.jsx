@@ -6,7 +6,13 @@ import { DatabaseProvider } from "./context/DatabaseContext";
 
 function App() {
   return (
-    <Routes />
+    <AuthProvider>
+      <CurrencyProvider>
+        <DatabaseProvider>
+          <Routes />
+        </DatabaseProvider>
+      </CurrencyProvider>
+    </AuthProvider>
   );
 }
 
