@@ -11,9 +11,25 @@ const CurrencyContext = createContext({
 
 export const CurrencyProvider = ({ children }) => {
   const [currency, setCurrency] = useState('RWF');
-  const { rates, loading, convert } = useExchangeRates('RWF', ['RWF','USD']);
+  
+  // Wrap useExchangeRates in try-catch to prevent crashes
+  let exchangeData = { rates: { RWF: 1, USD: 0.00077 }, loading: false, convert: (amount) => amount };
+  
+  try {
+    exchangeData = useExchangeRates('RWF', ['RWF','USD']);
+  } catch (error) {
+    console.warn('Currency context error, using defaults:', error);
+  }
 
-  const value = useMemo(() => ({ currency, setCurrency, convert, rates, loading }), [currency, convert, rates, loading]);
+  const { rates, loading, convert } = exchangeData;
+
+  const value = useMemo(() => ({ 
+    currency, 
+    setCurrency, 
+    convert: convert || ((amount) => amount), 
+    rates: rates || { RWF: 1, USD: 0.00077 }, 
+    loading: loading || false 
+  }), [currency, convert, rates, loading]);
 
   return (
     <CurrencyContext.Provider value={value}>

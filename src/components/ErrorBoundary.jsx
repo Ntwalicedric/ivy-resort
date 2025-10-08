@@ -12,9 +12,20 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    error.__ErrorBoundary = true;
-    window.__COMPONENT_ERROR__?.(error, errorInfo);
-    // console.log("Error caught by ErrorBoundary:", error, errorInfo);
+    // Add error boundary flag
+    if (error) {
+      error.__ErrorBoundary = true;
+    }
+    
+    // Log error safely
+    try {
+      console.error("Error caught by ErrorBoundary:", error, errorInfo);
+      if (window.__COMPONENT_ERROR__) {
+        window.__COMPONENT_ERROR__(error, errorInfo);
+      }
+    } catch (logError) {
+      console.error("Failed to log error:", logError);
+    }
   }
 
   render() {
