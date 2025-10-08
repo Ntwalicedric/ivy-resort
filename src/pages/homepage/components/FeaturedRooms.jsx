@@ -39,39 +39,12 @@ const FeaturedRooms = ({ onBookingClick }) => {
     );
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2
-      }
-    }
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut"
-      }
-    }
-  };
 
   return (
     <section className="py-16 lg:py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div
-          }
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          }
-          className="text-center mb-16"
-        >
+        <div className="text-center mb-16">
           <div className="inline-flex items-center space-x-2 bg-secondary/10 px-4 py-2 rounded-full mb-6">
             <Icon name="Bed" size={16} className="text-secondary" />
             <span className="text-sm font-medium text-secondary">Premium Accommodations</span>
@@ -87,17 +60,10 @@ const FeaturedRooms = ({ onBookingClick }) => {
         </div>
 
         {/* Room Cards Grid */}
-        <div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {roomCategories?.map((room) => (
             <div
               key={room?.id}
-              variants={cardVariants}
               onMouseEnter={() => setHoveredRoom(room?.id)}
               onMouseLeave={() => setHoveredRoom(null)}
               className="group bg-card rounded-2xl overflow-hidden luxury-shadow hover:luxury-shadow-hover smooth-transition cursor-pointer flex flex-col h-full card-hover"
@@ -255,13 +221,7 @@ const FeaturedRooms = ({ onBookingClick }) => {
         )}
 
         {/* View All Rooms CTA */}
-        <div
-          }
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          }
-          className="text-center mt-12"
-        >
+        <div className="text-center mt-12">
           <Button
             variant="outline"
             size="lg"

@@ -82,13 +82,7 @@ const RestaurantShowcase = () => {
     <section className="py-16 lg:py-24 bg-muted/30 overflow-x-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div
-          }
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          }
-          className="text-center mb-16"
-        >
+        <div className="text-center mb-16">
           <div className="inline-flex items-center space-x-2 bg-secondary/10 px-4 py-2 rounded-full mb-6">
             <Icon name="ChefHat" size={16} className="text-secondary" />
             <span className="text-sm font-medium text-secondary">Rooftop Dining</span>
@@ -104,13 +98,7 @@ const RestaurantShowcase = () => {
         </div>
 
         {/* Tab Navigation */}
-        <div
-          }
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          }
-          className="flex justify-center mb-12"
-        >
+        <div className="flex justify-center mb-12">
           <div className="bg-card rounded-xl p-2 luxury-shadow max-w-full">
             <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
               {tabs?.map((tab) => (
@@ -135,12 +123,7 @@ const RestaurantShowcase = () => {
         <div className="min-h-[600px]">
           {/* Overview Tab */}
           {activeTab === 'overview' && (
-            <div
-              }
-              }
-              }
-              className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
-            >
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="space-y-8">
                 <div>
                   <h3 className="font-heading text-2xl lg:text-3xl font-bold text-primary mb-4">
@@ -215,18 +198,10 @@ const RestaurantShowcase = () => {
 
           {/* Cuisines Tab */}
           {activeTab === 'cuisines' && (
-            <div
-              }
-              }
-              }
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {cuisineTypes?.map((cuisine, index) => (
                 <div
                   key={cuisine?.id}
-                  }
-                  }
-                  }
                   className="group bg-card rounded-2xl overflow-hidden luxury-shadow hover:luxury-shadow-hover smooth-transition"
                 >
                   <div className="relative h-48 overflow-hidden">

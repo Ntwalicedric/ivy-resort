@@ -77,12 +77,7 @@ const LocationHighlights = () => {
     <section className="py-16 lg:py-24 bg-muted/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div
-          }
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          }
-          className="text-center mb-16">
+        <div className="text-center mb-16">
 
           <div className="inline-flex items-center space-x-2 bg-secondary/10 px-4 py-2 rounded-full mb-6">
             <Icon name="MapPin" size={16} className="text-secondary" />
@@ -101,12 +96,7 @@ const LocationHighlights = () => {
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
           {/* Interactive Map Section */}
-          <div
-            }
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            }
-            className="space-y-8">
+          <div className="space-y-8">
 
             <div className="bg-card rounded-2xl p-6 luxury-shadow">
               <h3 className="font-heading text-2xl font-semibold text-primary mb-6">
@@ -186,12 +176,7 @@ const LocationHighlights = () => {
           </div>
 
           {/* Highlights Showcase */}
-          <div
-            }
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            }
-            className="space-y-6">
+          <div className="space-y-6">
 
             {/* Active Highlight Display */}
             <div className="bg-card rounded-2xl overflow-hidden luxury-shadow">
@@ -280,12 +265,7 @@ const LocationHighlights = () => {
         </div>
 
         {/* Transportation & Access */}
-        <div
-          }
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          }
-          className="bg-card rounded-2xl p-8 luxury-shadow">
+        <div className="bg-card rounded-2xl p-8 luxury-shadow">
 
           <div className="text-center mb-8">
             <h3 className="font-heading text-2xl font-semibold text-primary mb-4">

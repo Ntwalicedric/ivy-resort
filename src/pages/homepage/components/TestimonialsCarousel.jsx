@@ -108,13 +108,7 @@ const TestimonialsCarousel = () => {
     <section className="py-16 lg:py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div
-          }
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          }
-          className="text-center mb-16"
-        >
+        <div className="text-center mb-16">
           <div className="inline-flex items-center space-x-2 bg-success/10 px-4 py-2 rounded-full mb-6">
             <Icon name="MessageCircle" size={16} className="text-success" />
             <span className="text-sm font-medium text-success">Guest Testimonials</span>
@@ -131,15 +125,10 @@ const TestimonialsCarousel = () => {
 
         {/* Main Testimonial Display */}
         <div className="relative max-w-5xl mx-auto">
-          < mode="wait">
-            <div
-              key={currentTestimonial}
-              }
-              }
-              exit={{ opacity: 0, x: -50 }}
-              }
-              className="bg-card rounded-3xl p-8 lg:p-12 luxury-shadow"
-            >
+          <div
+            key={currentTestimonial}
+            className="bg-card rounded-3xl p-8 lg:p-12 luxury-shadow"
+          >
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
                 {/* Guest Info */}
                 <div className="text-center lg:text-left">
@@ -213,7 +202,7 @@ const TestimonialsCarousel = () => {
                 </div>
               </div>
             </div>
-          </>
+          </div>
 
           {/* Navigation Controls */}
           <div className="absolute top-1/2 -left-4 transform -translate-y-1/2 hidden lg:block">
@@ -270,13 +259,7 @@ const TestimonialsCarousel = () => {
         </div>
 
         {/* Review Stats */}
-        <div
-          }
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          }
-          className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 text-center"
-        >
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 text-center">
           <div>
             <div className="font-heading text-3xl font-bold text-primary mb-2">4.9</div>
             <div className="text-muted-foreground">Average Rating</div>
