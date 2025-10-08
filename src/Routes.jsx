@@ -4,8 +4,10 @@ import ScrollToTop from "components/ScrollToTop";
 import ErrorBoundary from "components/ErrorBoundary";
 import NotFound from "pages/NotFound";
 
-// Lazy load pages for better performance
-const Homepage = lazy(() => import('./pages/homepage'));
+// Import Homepage directly to fix root path issue
+import Homepage from './pages/homepage';
+
+// Lazy load other pages for better performance
 const AboutLocationPage = lazy(() => import('./pages/about-location'));
 const ContactPage = lazy(() => import('./pages/contact'));
 const RoomSelectionBooking = lazy(() => import('./pages/room-selection-booking'));

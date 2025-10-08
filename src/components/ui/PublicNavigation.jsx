@@ -14,7 +14,7 @@ const PublicNavigation = ({ className = '' }) => {
   const { currency, setCurrency } = useCurrency();
 
   const navigationItems = [
-    { label: 'Home', path: '/homepage', icon: 'Home' },
+    { label: 'Home', path: '/', icon: 'Home' },
     { label: 'Rooms & Booking', path: '/room-selection-booking', icon: 'Bed' },
     { label: 'About', path: '/about-location', icon: 'MapPin' },
     { label: 'Contact', path: '/contact', icon: 'Phone' },
@@ -65,7 +65,7 @@ const PublicNavigation = ({ className = '' }) => {
           {/* Logo */}
           <div 
             className="flex items-center cursor-pointer"
-            onClick={() => handleNavigation('/homepage')}
+            onClick={() => handleNavigation('/')}
           >
             <div className="flex items-center space-x-2">
               <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
