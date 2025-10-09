@@ -13,18 +13,22 @@
       "source": "/assets/(.*\\.css)",
       "headers": [
         { "key": "Content-Type", "value": "text/css" },
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate, max-age=0" },
         { "key": "Pragma", "value": "no-cache" },
-        { "key": "Expires", "value": "0" }
+        { "key": "Expires", "value": "0" },
+        { "key": "Last-Modified", "value": "Thu, 01 Jan 1970 00:00:00 GMT" },
+        { "key": "ETag", "value": "\"cache-buster\"" }
       ]
     },
     {
       "source": "/assets/(.*\\.js)",
       "headers": [
         { "key": "Content-Type", "value": "application/javascript" },
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate, max-age=0" },
         { "key": "Pragma", "value": "no-cache" },
-        { "key": "Expires", "value": "0" }
+        { "key": "Expires", "value": "0" },
+        { "key": "Last-Modified", "value": "Thu, 01 Jan 1970 00:00:00 GMT" },
+        { "key": "ETag", "value": "\"cache-buster\"" }
       ]
     },
     {
@@ -36,9 +40,11 @@
     {
       "source": "/index.html",
       "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate, max-age=0" },
         { "key": "Pragma", "value": "no-cache" },
-        { "key": "Expires", "value": "0" }
+        { "key": "Expires", "value": "0" },
+        { "key": "Last-Modified", "value": "Thu, 01 Jan 1970 00:00:00 GMT" },
+        { "key": "ETag", "value": "\"cache-buster\"" }
       ]
     },
     {

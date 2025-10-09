@@ -61,7 +61,7 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "cross-env REACT_APP_BUILD_TIME=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" vite build --sourcemap",
+    "build": "cross-env REACT_APP_BUILD_TIME=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" REACT_APP_BUILD_ID=\"$(date +%s)\" vite build --sourcemap",
     "serve": "vite preview"
   },
   "eslintConfig": {

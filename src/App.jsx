@@ -6,6 +6,7 @@ import { DatabaseProvider } from "./context/DatabaseContext";
 import BrowserCompatibilityTest from "./components/BrowserCompatibilityTest";
 import CacheDetector from "./components/CacheDetector";
 import { checkForUpdates, showCacheUpdateNotification } from "./utils/versionManager";
+import { autoInvalidateCache } from "./utils/cacheBuster";
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -29,6 +30,9 @@ function App() {
         console.log('App: Version updated, showing refresh notification');
         showCacheUpdateNotification();
       }
+      
+      // Auto-invalidate cache if needed
+      autoInvalidateCache();
     } catch (error) {
       console.warn('App: Version check failed:', error);
     }
