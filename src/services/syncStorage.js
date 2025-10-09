@@ -147,6 +147,9 @@ class SyncStorageService {
         newValue: JSON.stringify(data),
         oldValue: localStorage.getItem('ivy_resort_reservations')
       }));
+      
+      // Also update the shared sync data
+      this.setSharedData(data);
     } catch (error) {
       console.warn('Failed to set local data:', error);
     }

@@ -62,9 +62,17 @@ export const checkCacheValidity = () => {
   return false; // Cache is valid
 };
 
-// Auto-invalidate cache on version change
+// Auto-invalidate cache on version change (only when actually needed)
 export const autoInvalidateCache = () => {
+  // Only check once per session to prevent constant refreshing
+  const sessionKey = 'ivy_resort_cache_checked';
+  if (sessionStorage.getItem(sessionKey)) {
+    return; // Already checked this session
+  }
+  
   if (checkCacheValidity()) {
+    sessionStorage.setItem(sessionKey, 'true');
+    
     // Show notification before invalidating
     const notification = document.createElement('div');
     notification.style.cssText = `
@@ -94,5 +102,8 @@ export const autoInvalidateCache = () => {
     setTimeout(() => {
       invalidateAllCaches();
     }, 2000);
+  } else {
+    // Mark as checked even if no update needed
+    sessionStorage.setItem(sessionKey, 'true');
   }
 };

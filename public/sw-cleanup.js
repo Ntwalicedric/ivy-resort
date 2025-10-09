@@ -4,6 +4,12 @@
 (function() {
   'use strict';
 
+  // Only run cleanup once per session to prevent constant refreshing
+  const cleanupKey = 'ivy_resort_sw_cleanup_done';
+  if (sessionStorage.getItem(cleanupKey)) {
+    return; // Already cleaned up this session
+  }
+
   // Check if service workers are supported
   if ('serviceWorker' in navigator) {
     // Unregister all existing service workers
@@ -41,7 +47,10 @@
     }
   }
 
-  // Clear browser cache by adding cache-busting parameter
+  // Mark cleanup as done for this session
+  sessionStorage.setItem(cleanupKey, 'true');
+
+  // Clear browser cache by adding cache-busting parameter (only if needed)
   const url = new URL(window.location);
   const cacheBuster = url.searchParams.get('_cb');
   

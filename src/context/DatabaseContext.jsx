@@ -516,12 +516,37 @@ export const DatabaseProvider = ({ children }) => {
     syncStorage.initialize();
     
     // Add sync listener for cross-device updates
-    syncStorage.addSyncListener((syncedData) => {
+    const syncListener = (syncedData) => {
       if (syncedData && syncedData.reservations) {
         console.log('DatabaseContext: Received sync update with', syncedData.reservations.length, 'reservations');
         setReservations(syncedData.reservations);
       }
-    });
+    };
+    
+    // Also listen for storage events directly
+    const handleStorageChange = (e) => {
+      if (e.key === 'ivy_resort_reservations' && e.newValue) {
+        try {
+          const data = JSON.parse(e.newValue);
+          if (data && data.reservations) {
+            console.log('DatabaseContext: Storage event received with', data.reservations.length, 'reservations');
+            setReservations(data.reservations);
+          }
+        } catch (error) {
+          console.error('DatabaseContext: Error parsing storage data:', error);
+        }
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    syncStorage.addSyncListener(syncListener);
+    
+    // Cleanup listener on unmount
+    return () => {
+      syncStorage.removeSyncListener(syncListener);
+      window.removeEventListener('storage', handleStorageChange);
+    };
     
     const isAdminRoute = typeof window !== 'undefined' && window.location && window.location.pathname && window.location.pathname.startsWith('/admin');
     if (!isAdminRoute) {
