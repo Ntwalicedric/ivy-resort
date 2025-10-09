@@ -70,8 +70,17 @@ export const autoInvalidateCache = () => {
     return; // Already checked this session
   }
   
-  if (checkCacheValidity()) {
+  // Only invalidate if there's a significant version change (not just build time)
+  const currentVersion = getCacheBuster();
+  const storedVersion = localStorage.getItem('ivy_resort_cache_version');
+  
+  // Only show notification if there's a real version change (different date)
+  const currentDate = currentVersion.split('-')[0];
+  const storedDate = storedVersion ? storedVersion.split('-')[0] : null;
+  
+  if (storedDate && currentDate !== storedDate) {
     sessionStorage.setItem(sessionKey, 'true');
+    localStorage.setItem('ivy_resort_cache_version', currentVersion);
     
     // Show notification before invalidating
     const notification = document.createElement('div');
@@ -105,5 +114,6 @@ export const autoInvalidateCache = () => {
   } else {
     // Mark as checked even if no update needed
     sessionStorage.setItem(sessionKey, 'true');
+    localStorage.setItem('ivy_resort_cache_version', currentVersion);
   }
 };

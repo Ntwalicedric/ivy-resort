@@ -31,8 +31,8 @@ function App() {
         showCacheUpdateNotification();
       }
       
-      // Auto-invalidate cache if needed
-      autoInvalidateCache();
+      // Disable automatic cache invalidation to prevent constant refreshing
+      // autoInvalidateCache();
     } catch (error) {
       console.warn('App: Version check failed:', error);
     }
