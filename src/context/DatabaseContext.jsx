@@ -499,9 +499,13 @@ export const DatabaseProvider = ({ children }) => {
     // Add sync listener for cross-device updates
     const syncListener = (syncedData) => {
       if (syncedData && syncedData.type === 'sync') {
-        console.log('DatabaseContext: Received sync update');
-        // Trigger data refresh
-        refreshData();
+        console.log('DatabaseContext: Received sync update with data:', syncedData.data);
+        if (syncedData.data && Array.isArray(syncedData.data)) {
+          setReservations(syncedData.data);
+        } else {
+          // Trigger data refresh if no data provided
+          refreshData();
+        }
       }
     };
     

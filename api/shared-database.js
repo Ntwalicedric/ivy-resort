@@ -10,56 +10,8 @@ let sharedDatabase = {
   lastUpdated: Date.now()
 };
 
-// Initialize with some sample data
-if (sharedDatabase.reservations.length === 0) {
-  sharedDatabase.reservations = [
-    {
-      id: 1,
-      guestName: "John Doe",
-      email: "john@example.com",
-      phone: "+250 123 456 789",
-      checkIn: "2024-01-20",
-      checkOut: "2024-01-25",
-      roomType: "Deluxe Suite",
-      guests: 2,
-      status: "confirmed",
-      totalAmount: 500,
-      currency: "USD",
-      createdAt: "2024-01-15T10:00:00Z",
-      updatedAt: "2024-01-15T10:00:00Z"
-    },
-    {
-      id: 2,
-      guestName: "Jane Smith",
-      email: "jane@example.com",
-      phone: "+250 987 654 321",
-      checkIn: "2024-01-22",
-      checkOut: "2024-01-24",
-      roomType: "Standard Room",
-      guests: 1,
-      status: "pending",
-      totalAmount: 200,
-      currency: "USD",
-      createdAt: "2024-01-16T14:30:00Z",
-      updatedAt: "2024-01-16T14:30:00Z"
-    }
-  ];
-  
-  sharedDatabase.rooms = [
-    { id: 1, name: "Deluxe Suite", type: "suite", status: "available", price: 100 },
-    { id: 2, name: "Standard Room", type: "standard", status: "available", price: 50 },
-    { id: 3, name: "Luxury Villa", type: "villa", status: "maintenance", price: 200 }
-  ];
-  
-  sharedDatabase.guests = [
-    { id: 1, name: "John Doe", email: "john@example.com", phone: "+250 123 456 789", visits: 3 },
-    { id: 2, name: "Jane Smith", email: "jane@example.com", phone: "+250 987 654 321", visits: 1 }
-  ];
-  
-  sharedDatabase.users = [
-    { id: 1, name: "Admin User", email: "admin@ivyresort.com", role: "admin", active: true }
-  ];
-}
+// Initialize with empty data (no sample data)
+// The database will be populated with real reservations as they are created
 
 export default function handler(req, res) {
   // Enable CORS
@@ -144,12 +96,22 @@ function handleGet(req, res, action, type, id) {
       res.json({ success: true, data: reports });
       break;
       
+    case 'clear':
+      // Clear all data
+      sharedDatabase.reservations = [];
+      sharedDatabase.rooms = [];
+      sharedDatabase.guests = [];
+      sharedDatabase.users = [];
+      sharedDatabase.lastUpdated = Date.now();
+      res.json({ success: true, message: 'Database cleared successfully' });
+      break;
+      
     default:
       res.status(400).json({ success: false, error: 'Invalid action' });
   }
 }
 
-// POST operations (Create)
+  // POST operations (Create)
 function handlePost(req, res, action, type) {
   switch (action) {
     case 'create':
@@ -163,6 +125,13 @@ function handlePost(req, res, action, type) {
         
         sharedDatabase[type].push(newItem);
         sharedDatabase.lastUpdated = Date.now();
+        
+        // If creating a reservation, try to send email
+        if (type === 'reservations' && newItem.email) {
+          sendConfirmationEmail(newItem).catch(error => {
+            console.warn('Failed to send confirmation email:', error);
+          });
+        }
         
         res.json({ success: true, data: newItem });
       } else {
@@ -231,6 +200,30 @@ function handleDelete(req, res, action, type, id) {
 // Helper functions
 function getNextId(array) {
   return array.length > 0 ? Math.max(...array.map(item => item.id)) + 1 : 1;
+}
+
+// Send confirmation email
+async function sendConfirmationEmail(reservation) {
+  try {
+    const response = await fetch(`${process.env.VERCEL_URL || 'http://localhost:3000'}/api/send-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ reservation })
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+      console.log('Email sent successfully:', result.messageId);
+      return result;
+    } else {
+      throw new Error(`Email service responded with status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Failed to send confirmation email:', error);
+    throw error;
+  }
 }
 
 function calculateRevenueByMonth() {

@@ -51,8 +51,12 @@ class SharedDatabaseService {
   async triggerSync() {
     try {
       console.log('Shared Database Service: Triggering sync...');
-      await this.syncReservations();
-      this.notifySyncListeners({ type: 'sync', timestamp: Date.now() });
+      const reservations = await this.syncReservations();
+      this.notifySyncListeners({ 
+        type: 'sync', 
+        timestamp: Date.now(),
+        data: reservations 
+      });
     } catch (error) {
       console.warn('Shared Database Service: Sync failed:', error);
     }
