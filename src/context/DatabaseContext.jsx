@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { api, handleApiError } from '../services/api';
 import syncStorage from '../services/syncStorage';
+import sharedDatabase from '../services/sharedDatabase';
 
 // Debug: Check if api object is properly imported (commented out for production)
 // console.log('DatabaseContext: Imported api object:', api);
@@ -119,32 +120,32 @@ export const DatabaseProvider = ({ children }) => {
       let data;
       switch (dataType) {
         case 'reservations':
-          data = await api.getReservations(params);
+          data = await sharedDatabase.getReservations();
           console.log(`DatabaseContext: fetched ${dataType} data:`, data);
           setReservations(data);
           break;
         case 'rooms':
-          data = await api.getRooms(params);
+          data = await sharedDatabase.getRooms();
           console.log(`DatabaseContext: fetched ${dataType} data:`, data);
           setRooms(data);
           break;
         case 'guests':
-          data = await api.getGuests(params);
+          data = await sharedDatabase.getGuests();
           console.log(`DatabaseContext: fetched ${dataType} data:`, data);
           setGuests(data);
           break;
         case 'users':
-          data = await api.getUsers(params);
+          data = await sharedDatabase.getUsers();
           console.log(`DatabaseContext: fetched ${dataType} data:`, data);
           setUsers(data);
           break;
         case 'overview':
-          data = await api.getOverview();
+          data = await sharedDatabase.getOverview();
           console.log(`DatabaseContext: fetched ${dataType} data:`, data);
           setOverview(data);
           break;
         case 'reports':
-          data = await api.getReports();
+          data = await sharedDatabase.getReports();
           console.log(`DatabaseContext: fetched ${dataType} data:`, data);
           setReports(data);
           break;
@@ -202,17 +203,11 @@ export const DatabaseProvider = ({ children }) => {
     console.log('DatabaseContext: createReservation called with:', reservationData);
     try {
       setLoading(prev => ({ ...prev, reservations: true }));
-      const response = await api.createReservation(reservationData);
+      const response = await sharedDatabase.createReservation(reservationData);
       console.log('DatabaseContext: createReservation API response:', response);
       if (response.success) {
-        const newReservations = [response.data, ...reservations];
-        setReservations(newReservations);
-        
-        // Sync data across devices
-        syncStorage.setLocalData({
-          reservations: newReservations,
-          lastUpdated: Date.now()
-        });
+        // Update local state
+        setReservations(prev => [response.data, ...prev]);
         
         return { 
           success: true, 
@@ -235,7 +230,7 @@ export const DatabaseProvider = ({ children }) => {
     console.log('DatabaseContext: updateReservation called with:', { id, updateData });
     try {
       setLoading(prev => ({ ...prev, reservations: true }));
-      const response = await api.updateReservation(id, updateData);
+      const response = await sharedDatabase.updateReservation(id, updateData);
       console.log('DatabaseContext: updateReservation API response:', response);
       if (response.success) {
         console.log('DatabaseContext: Updating reservation state, current reservations:', reservations);
@@ -263,7 +258,7 @@ export const DatabaseProvider = ({ children }) => {
     console.log('DatabaseContext: cancelReservation called with id:', id);
     try {
       setLoading(prev => ({ ...prev, reservations: true }));
-      const response = await api.cancelReservation(id);
+      const response = await sharedDatabase.cancelReservation(id);
       console.log('DatabaseContext: cancelReservation API response:', response);
       if (response.success) {
         console.log('DatabaseContext: Cancelling reservation state, current reservations:', reservations);
@@ -293,8 +288,7 @@ export const DatabaseProvider = ({ children }) => {
     console.log('DatabaseContext: checkInReservation called with id:', id);
     try {
       setLoading(prev => ({ ...prev, reservations: true }));
-      // Simulate API call for check-in
-      const response = { success: true, data: { id: parseInt(id), status: 'checked-in', updatedAt: new Date().toISOString() } };
+      const response = await sharedDatabase.checkInReservation(id);
       console.log('DatabaseContext: checkInReservation API response:', response);
       if (response.success) {
         setReservations(prev => {
@@ -324,34 +318,21 @@ export const DatabaseProvider = ({ children }) => {
     try {
       setLoading(prev => ({ ...prev, reservations: true }));
       
-      // Immediately update the UI for better responsiveness
-      setReservations(prev => {
-        const updated = prev.map(reservation => 
-          reservation.id === parseInt(id) || reservation.id === id
-            ? { ...reservation, status: 'checked-out', updatedAt: new Date().toISOString() }
-            : reservation
-        );
-        console.log('DatabaseContext: Immediately updated reservations for check-out:', updated);
-        return updated;
-      });
-      
-      // Simulate API call for check-out
-      const response = { success: true, data: { id: parseInt(id), status: 'checked-out', updatedAt: new Date().toISOString() } };
+      const response = await sharedDatabase.checkOutReservation(id);
       console.log('DatabaseContext: checkOutReservation API response:', response);
       
       if (response.success) {
-        return { success: true, data: response.data };
-      } else {
-        // Revert the optimistic update if API call fails
         setReservations(prev => {
-          const reverted = prev.map(reservation => 
+          const updated = prev.map(reservation => 
             reservation.id === parseInt(id) || reservation.id === id
-              ? { ...reservation, status: 'confirmed', updatedAt: new Date().toISOString() }
+              ? { ...reservation, status: 'checked-out', updatedAt: new Date().toISOString() }
               : reservation
           );
-          console.log('DatabaseContext: Reverted reservations after check-out failure:', reverted);
-          return reverted;
+          console.log('DatabaseContext: Updated reservations after check-out:', updated);
+          return updated;
         });
+        return { success: true, data: response.data };
+      } else {
         return { success: false, error: response.error || 'Failed to check-out reservation' };
       }
     } catch (error) {
@@ -512,25 +493,26 @@ export const DatabaseProvider = ({ children }) => {
   
   // Load initial data on mount (defer heavy admin-only data on public pages)
   useEffect(() => {
-    // Initialize sync storage
-    syncStorage.initialize();
+    // Initialize shared database
+    sharedDatabase.initialize();
     
     // Add sync listener for cross-device updates
     const syncListener = (syncedData) => {
-      if (syncedData && syncedData.reservations) {
-        console.log('DatabaseContext: Received sync update with', syncedData.reservations.length, 'reservations');
-        setReservations(syncedData.reservations);
+      if (syncedData && syncedData.type === 'sync') {
+        console.log('DatabaseContext: Received sync update');
+        // Trigger data refresh
+        refreshData();
       }
     };
     
-    // Also listen for storage events directly
+    // Listen for storage events from shared database
     const handleStorageChange = (e) => {
-      if (e.key === 'ivy_resort_reservations' && e.newValue) {
+      if (e.key === 'ivy_resort_shared_reservations' && e.newValue) {
         try {
           const data = JSON.parse(e.newValue);
-          if (data && data.reservations) {
-            console.log('DatabaseContext: Storage event received with', data.reservations.length, 'reservations');
-            setReservations(data.reservations);
+          if (data && Array.isArray(data)) {
+            console.log('DatabaseContext: Storage event received with', data.length, 'reservations');
+            setReservations(data);
           }
         } catch (error) {
           console.error('DatabaseContext: Error parsing storage data:', error);
@@ -540,11 +522,11 @@ export const DatabaseProvider = ({ children }) => {
     
     window.addEventListener('storage', handleStorageChange);
     
-    syncStorage.addSyncListener(syncListener);
+    sharedDatabase.addSyncListener(syncListener);
     
     // Cleanup listener on unmount
     return () => {
-      syncStorage.removeSyncListener(syncListener);
+      sharedDatabase.removeSyncListener(syncListener);
       window.removeEventListener('storage', handleStorageChange);
     };
     
