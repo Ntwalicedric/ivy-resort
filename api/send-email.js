@@ -1,7 +1,7 @@
 // Vercel serverless function to send emails
 // This actually sends emails to users' inboxes
 
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
 export default async function handler(req, res) {
   // Set CORS headers
