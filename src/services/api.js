@@ -238,8 +238,15 @@ const sendConfirmationEmail = async (reservation) => {
     };
   }
   
-  // Enrich reservation with currency display fields if missing
+  // Enrich reservation with required and currency display fields if missing
   try {
+    const normalizedConfirmationId = reservation.confirmationId
+      || reservation.confirmationID
+      || reservation.reservationId
+      || reservation.id
+      || `IVY-${Date.now()}`;
+    reservation.confirmationId = String(normalizedConfirmationId);
+
     const currency = reservation.currency || 'USD';
     const amountInCurrency = reservation.totalAmountInCurrency ?? reservation.totalAmount;
     const isRWF = currency === 'RWF';

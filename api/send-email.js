@@ -23,12 +23,30 @@ export default async function handler(req, res) {
     res.setHeader('X-Frame-Options', 'DENY');
     res.setHeader('Referrer-Policy', 'no-referrer');
     res.setHeader('Permissions-Policy', 'geolocation=()');
-    const { reservation } = req.body;
+    let { reservation } = req.body;
 
     // Validate request
     if (!reservation || !reservation.email) {
       return res.status(400).json({ error: 'Missing reservation data' });
     }
+
+    // Normalize/ensure critical fields
+    const normalizedConfirmationId = reservation.confirmationId
+      || reservation.confirmationID
+      || reservation.reservationId
+      || reservation.id
+      || `IVY-${Date.now()}`;
+    const normalizedGuestName = reservation.guestName
+      || reservation.guest
+      || [reservation.firstName, reservation.lastName].filter(Boolean).join(' ')
+      || 'Guest';
+    const normalizedRoomName = reservation.roomName || reservation.room || reservation.roomType || 'Room';
+    reservation = {
+      ...reservation,
+      confirmationId: String(normalizedConfirmationId),
+      guestName: normalizedGuestName,
+      roomName: normalizedRoomName
+    };
 
     console.log('📧 Serverless function: Sending email to', reservation.email);
 
