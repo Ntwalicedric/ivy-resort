@@ -49,6 +49,11 @@ export default async function handler(req, res) {
     // Generate email content
     const emailContent = generateEmailContent(reservation);
 
+    // Create a unique message id for this email
+    const uniqueSuffix = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const sanitizedConfirmation = String(reservation.confirmationId || 'IVY').replace(/[^A-Za-z0-9_-]/g, '');
+    const generatedMessageId = `<ivy-${sanitizedConfirmation}-${uniqueSuffix}@ivyresort.com>`;
+
     // Send email
     const info = await transporter.sendMail({
       from: process.env.MAIL_FROM || 'Ivy Resort <no-reply@ivyresort.com>',
@@ -56,19 +61,23 @@ export default async function handler(req, res) {
       subject: emailContent.subject,
       html: emailContent.html,
       text: emailContent.text,
+      messageId: generatedMessageId,
       headers: {
         'X-Mailer': 'Ivy Resort Automated System',
         'X-Priority': '3',
         'X-MSMail-Priority': 'Normal',
-        'Importance': 'Normal'
+        'Importance': 'Normal',
+        'X-Message-Id': generatedMessageId,
+        'X-Confirmation-Id': String(reservation.confirmationId || '')
       }
     });
 
-    console.log('✅ Email sent successfully:', info.messageId);
+    const finalMessageId = info?.messageId || generatedMessageId;
+    console.log('✅ Email sent successfully:', finalMessageId);
 
     return res.status(200).json({
       success: true,
-      messageId: info.messageId,
+      messageId: finalMessageId,
       message: 'Email sent successfully to client inbox'
     });
 
