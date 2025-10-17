@@ -214,9 +214,27 @@ async function handleUpdateReservation(req, res) {
       })
     }
 
+    // Map editable fields from camelCase to snake_case
     const updateData = {}
     if (status) updateData.status = status
     if (emailSent !== undefined) updateData.email_sent = emailSent
+    // Optional editable fields from admin
+    if (req.body.guestName) updateData.guest_name = req.body.guestName
+    if (req.body.email) updateData.email = req.body.email
+    if (req.body.phone) updateData.phone = req.body.phone
+    if (req.body.roomNumber) updateData.room_number = req.body.roomNumber
+    if (req.body.roomType) updateData.room_type = req.body.roomType
+    if (req.body.roomName) updateData.room_name = req.body.roomName
+    if (req.body.checkIn) updateData.check_in = req.body.checkIn
+    if (req.body.checkOut) updateData.check_out = req.body.checkOut
+    if (req.body.totalAmount !== undefined) updateData.total_amount = req.body.totalAmount
+    if (req.body.currency) updateData.currency = req.body.currency
+    if (req.body.totalAmountInCurrency !== undefined) updateData.total_amount_in_currency = req.body.totalAmountInCurrency
+    if (req.body.totalAmountDisplay) updateData.total_amount_display = req.body.totalAmountDisplay
+    if (req.body.specialRequests !== undefined) updateData.special_requests = req.body.specialRequests
+    if (req.body.arrivalTime) updateData.arrival_time = req.body.arrivalTime
+    if (req.body.guestCount !== undefined) updateData.guest_count = req.body.guestCount
+    if (req.body.country) updateData.country = req.body.country
 
     const { data, error } = await supabase
       .from('reservations')

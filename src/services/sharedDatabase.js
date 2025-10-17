@@ -234,6 +234,25 @@ class SharedDatabaseService {
     }
   }
 
+  async deleteReservation(id) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      const result = await response.json();
+      if (result.success) {
+        await this.triggerSync();
+      }
+      return result;
+    } catch (error) {
+      console.warn('Shared Database Service: Failed to delete reservation:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
   async checkInReservation(id) {
     try {
       const response = await fetch(`${API_BASE_URL}/${id}`, {

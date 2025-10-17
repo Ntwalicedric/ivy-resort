@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDatabase } from '../../context/DatabaseContext';
+import sharedDatabase from '../../services/sharedDatabase';
 import supabasePollingSyncService from '../../services/supabasePollingSync';
 import { 
   Plus,
@@ -255,8 +256,8 @@ const AdminDashboard = () => {
     console.log('handleDelete called with reservationId:', reservationId);
     if (window.confirm('Are you sure you want to delete this reservation?')) {
       try {
-        const result = await cancelReservation(reservationId);
-        console.log('cancelReservation result:', result);
+        const result = await sharedDatabase.deleteReservation(reservationId);
+        console.log('deleteReservation result:', result);
         if (result.success) {
           showNotification('Reservation deleted successfully!', 'success');
         } else {
