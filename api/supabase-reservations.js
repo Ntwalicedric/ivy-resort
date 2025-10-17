@@ -119,10 +119,10 @@ async function handler(req, res) {
           email_sent: requestData.emailSent !== undefined ? requestData.emailSent : currentData.email_sent
         }
 
+        // Use upsert instead of update to avoid constraint issues
         const { data, error } = await supabase
           .from('reservations')
-          .update(updateFields)
-          .eq('id', requestData.id)
+          .upsert({ ...updateFields, id: requestData.id })
           .select()
           .single()
 
