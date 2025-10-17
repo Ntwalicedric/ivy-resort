@@ -124,6 +124,9 @@ async function handler(req, res) {
           email_sent: requestData.emailSent !== undefined ? requestData.emailSent : currentData.email_sent
         }
 
+        console.log('Current data from DB (snake_case):', currentData)
+        console.log('Update data being inserted:', updatedData)
+
         // Validate that required fields are not null
         if (!updatedData.guest_name || !updatedData.email || !updatedData.room_name || !updatedData.check_in || !updatedData.check_out || !updatedData.total_amount) {
           return res.status(400).json({
