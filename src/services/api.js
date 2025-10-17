@@ -216,7 +216,7 @@ const generateConfirmationId = () => {
 // Import email services
 import emailService from './emailService';
 
-// Send confirmation email using multiple methods to ensure delivery
+// Send confirmation email using serverless function (enrich payload to match template expectations)
 const sendConfirmationEmail = async (reservation) => {
   console.log(`📧 API: Sending confirmation email to ${reservation.email}`);
   console.log(`📧 API: Confirmation ID: ${reservation.confirmationId}`);
@@ -238,10 +238,27 @@ const sendConfirmationEmail = async (reservation) => {
     };
   }
   
+  // Enrich reservation with currency display fields if missing
+  try {
+    const currency = reservation.currency || 'USD';
+    const amountInCurrency = reservation.totalAmountInCurrency ?? reservation.totalAmount;
+    const isRWF = currency === 'RWF';
+    const totalAmountDisplay = reservation.totalAmountDisplay ?? new Intl.NumberFormat(isRWF ? 'en-RW' : 'en-US', {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: isRWF ? 0 : 2,
+      maximumFractionDigits: isRWF ? 0 : 2,
+    })?.format(amountInCurrency);
+    reservation = { ...reservation, totalAmountInCurrency: amountInCurrency, totalAmountDisplay };
+  } catch {
+    // noop if Intl formatting fails
+  }
+
   // Method 1: Use Vercel serverless function
   try {
     console.log('📧 API: Sending email via Vercel serverless function...');
-    const response = await fetch('/api/send-email', {
+    const baseUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_EMAIL_API_URL) || '/api';
+    const response = await fetch(`${baseUrl}/send-email`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
