@@ -84,24 +84,87 @@ async function handler(req, res) {
       
       // Handle different operations based on request type
       if (requestData.operation === 'update' && requestData.id) {
-        // Update operation - return success without actually updating due to constraint issues
-        // This allows the UI to work while we resolve the backend issues
-        console.log('Update operation requested:', { id: requestData.id, updateData: requestData });
+        // Update operation - use proper field mapping
+        const { data: currentData, error: fetchError } = await supabase
+          .from('reservations')
+          .select('*')
+          .eq('id', requestData.id)
+          .single()
+
+        if (fetchError) {
+          throw fetchError
+        }
+
+        if (!currentData) {
+          return res.status(404).json({
+            success: false,
+            error: 'Reservation not found'
+          })
+        }
+
+        // Create update object with only the fields that are provided
+        const updateFields = {}
         
+        // Map camelCase to snake_case and only include provided fields
+        if (requestData.guestName !== undefined) updateFields.guest_name = requestData.guestName
+        if (requestData.email !== undefined) updateFields.email = requestData.email
+        if (requestData.phone !== undefined) updateFields.phone = requestData.phone
+        if (requestData.roomNumber !== undefined) updateFields.room_number = requestData.roomNumber
+        if (requestData.roomType !== undefined) updateFields.room_type = requestData.roomType
+        if (requestData.roomName !== undefined) updateFields.room_name = requestData.roomName
+        if (requestData.checkIn !== undefined) updateFields.check_in = requestData.checkIn
+        if (requestData.checkOut !== undefined) updateFields.check_out = requestData.checkOut
+        if (requestData.totalAmount !== undefined) updateFields.total_amount = requestData.totalAmount
+        if (requestData.currency !== undefined) updateFields.currency = requestData.currency
+        if (requestData.specialRequests !== undefined) updateFields.special_requests = requestData.specialRequests
+        if (requestData.arrivalTime !== undefined) updateFields.arrival_time = requestData.arrivalTime
+        if (requestData.guestCount !== undefined) updateFields.guest_count = requestData.guestCount
+        if (requestData.country !== undefined) updateFields.country = requestData.country
+        if (requestData.status !== undefined) updateFields.status = requestData.status
+        if (requestData.emailSent !== undefined) updateFields.email_sent = requestData.emailSent
+
+        console.log('Update fields:', updateFields)
+
+        const { data, error } = await supabase
+          .from('reservations')
+          .update(updateFields)
+          .eq('id', requestData.id)
+          .select()
+          .single()
+
+        if (error) {
+          throw error
+        }
+
         return res.status(200).json({
           success: true,
-          message: 'Reservation update simulated (backend constraint issue being resolved)',
-          data: { id: requestData.id, ...requestData }
+          data: toCamelCaseReservation(data),
+          message: 'Reservation updated successfully'
         })
       } else if (requestData.operation === 'delete' && requestData.id) {
-        // Delete operation - return success without actually deleting due to constraint issues
-        // This allows the UI to work while we resolve the backend issues
-        console.log('Delete operation requested:', { id: requestData.id });
-        
+        // Delete operation - use soft delete (mark as deleted)
+        const { data, error } = await supabase
+          .from('reservations')
+          .update({ status: 'deleted' })
+          .eq('id', requestData.id)
+          .select()
+          .single()
+
+        if (error) {
+          throw error
+        }
+
+        if (!data) {
+          return res.status(404).json({
+            success: false,
+            error: 'Reservation not found'
+          })
+        }
+
         return res.status(200).json({
           success: true,
-          message: 'Reservation deletion simulated (backend constraint issue being resolved)',
-          data: { id: requestData.id }
+          data: toCamelCaseReservation(data),
+          message: 'Reservation deleted successfully'
         })
       } else {
         // Create operation (default)
