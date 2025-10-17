@@ -147,7 +147,7 @@ Thank you for choosing Ivy Resort!
         </div>
 
         <div className="p-8 space-y-6">
-          {/* Email Confirmation Notice */
+          {/* Email Confirmation Notice */}
           {bookingData?.emailResult && (
             <div className={`rounded-xl p-4 border ${
               bookingData?.emailResult?.success 
