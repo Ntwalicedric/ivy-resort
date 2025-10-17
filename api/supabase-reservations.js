@@ -81,7 +81,7 @@ async function handler(req, res) {
       
       // Handle different operations based on request type
       if (requestData.operation === 'update' && requestData.id) {
-        // Update operation - fetch current record first, then update with merged data
+        // Update operation - use delete and recreate approach to avoid constraint issues
         const { data: currentData, error: fetchError } = await supabase
           .from('reservations')
           .select('*')
@@ -100,7 +100,8 @@ async function handler(req, res) {
         }
 
         // Merge current data with update data
-        const updateFields = {
+        const updatedData = {
+          confirmation_id: currentData.confirmation_id,
           guest_name: requestData.guestName !== undefined ? requestData.guestName : currentData.guest_name,
           email: requestData.email !== undefined ? requestData.email : currentData.email,
           phone: requestData.phone !== undefined ? requestData.phone : currentData.phone,
@@ -119,10 +120,20 @@ async function handler(req, res) {
           email_sent: requestData.emailSent !== undefined ? requestData.emailSent : currentData.email_sent
         }
 
-        // Use upsert instead of update to avoid constraint issues
+        // Delete the old record
+        const { error: deleteError } = await supabase
+          .from('reservations')
+          .delete()
+          .eq('id', requestData.id)
+
+        if (deleteError) {
+          throw deleteError
+        }
+
+        // Insert the updated record
         const { data, error } = await supabase
           .from('reservations')
-          .upsert({ ...updateFields, id: requestData.id })
+          .insert([updatedData])
           .select()
           .single()
 
