@@ -155,6 +155,34 @@ const BookingForm = ({
       const result = await createReservation(reservationData);
       
       if (result.success) {
+        // Also send email directly as backup to ensure delivery
+        let directEmailResult = { success: false, message: 'Direct email not attempted' };
+        try {
+          console.log('📧 BookingForm: Sending direct confirmation email...');
+          const baseUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_EMAIL_API_URL) || '/api';
+          const emailResponse = await fetch(`${baseUrl}/send-email`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              reservation: {
+                ...reservationData,
+                confirmationId: result.data.confirmationId
+              }
+            })
+          });
+          const emailData = await emailResponse.json();
+          if (emailResponse.ok && emailData?.success) {
+            directEmailResult = { success: true, message: 'Confirmation email sent successfully' };
+            console.log('📧 BookingForm: Direct email sent successfully');
+          } else {
+            directEmailResult = { success: false, message: emailData?.error || 'Direct email failed' };
+            console.warn('📧 BookingForm: Direct email failed:', emailData?.error);
+          }
+        } catch (emailError) {
+          console.warn('📧 BookingForm: Direct email error:', emailError);
+          directEmailResult = { success: false, message: 'Direct email failed due to error' };
+        }
+
         // Prepare booking data for success page
         const bookingData = {
           reservationId: result.data.confirmationId,
@@ -166,8 +194,8 @@ const BookingForm = ({
           totalAmount: selectedRoom.pricePerNight * calculateNights(),
           bookingDate: new Date().toISOString(),
           status: result.data.status,
-          emailSent: result.data.emailSent,
-          emailResult: result.emailResult
+          emailSent: result.data.emailSent || directEmailResult.success,
+          emailResult: directEmailResult.success ? directEmailResult : result.emailResult
         };
         
         onBookingComplete(bookingData);
