@@ -117,6 +117,99 @@ async function handler(req, res) {
       })
     }
 
+    // PUT handler for updates (check-in, check-out, edit)
+    if (method === 'PUT' && path.startsWith('/api/supabase-reservations/')) {
+      const id = path.split('/').pop()
+      
+      if (!id || isNaN(id)) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid reservation ID'
+        })
+      }
+
+      const updateData = req.body
+      
+      // Convert camelCase to snake_case for database
+      const dbUpdateData = {}
+      if (updateData.guestName) dbUpdateData.guest_name = updateData.guestName
+      if (updateData.email) dbUpdateData.email = updateData.email
+      if (updateData.phone) dbUpdateData.phone = updateData.phone
+      if (updateData.roomNumber) dbUpdateData.room_number = updateData.roomNumber
+      if (updateData.roomType) dbUpdateData.room_type = updateData.roomType
+      if (updateData.roomName) dbUpdateData.room_name = updateData.roomName
+      if (updateData.checkIn) dbUpdateData.check_in = updateData.checkIn
+      if (updateData.checkOut) dbUpdateData.check_out = updateData.checkOut
+      if (updateData.totalAmount) dbUpdateData.total_amount = updateData.totalAmount
+      if (updateData.currency) dbUpdateData.currency = updateData.currency
+      if (updateData.specialRequests) dbUpdateData.special_requests = updateData.specialRequests
+      if (updateData.arrivalTime) dbUpdateData.arrival_time = updateData.arrivalTime
+      if (updateData.guestCount) dbUpdateData.guest_count = updateData.guestCount
+      if (updateData.country) dbUpdateData.country = updateData.country
+      if (updateData.status) dbUpdateData.status = updateData.status
+      if (updateData.emailSent !== undefined) dbUpdateData.email_sent = updateData.emailSent
+
+      const { data, error } = await supabase
+        .from('reservations')
+        .update(dbUpdateData)
+        .eq('id', id)
+        .select()
+        .single()
+
+      if (error) {
+        throw error
+      }
+
+      if (!data) {
+        return res.status(404).json({
+          success: false,
+          error: 'Reservation not found'
+        })
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: toCamelCaseReservation(data),
+        message: 'Reservation updated successfully'
+      })
+    }
+
+    // DELETE handler
+    if (method === 'DELETE' && path.startsWith('/api/supabase-reservations/')) {
+      const id = path.split('/').pop()
+      
+      if (!id || isNaN(id)) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid reservation ID'
+        })
+      }
+
+      const { data, error } = await supabase
+        .from('reservations')
+        .delete()
+        .eq('id', id)
+        .select()
+        .single()
+
+      if (error) {
+        throw error
+      }
+
+      if (!data) {
+        return res.status(404).json({
+          success: false,
+          error: 'Reservation not found'
+        })
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: toCamelCaseReservation(data),
+        message: 'Reservation deleted successfully'
+      })
+    }
+
     return res.status(404).json({ error: 'Endpoint not found' })
 
   } catch (error) {
