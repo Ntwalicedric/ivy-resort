@@ -75,46 +75,116 @@ async function handler(req, res) {
       })
     }
 
-    // Simple POST handler
+    // POST handler for create, update, and delete operations
     if (method === 'POST' && path === '/api/supabase-reservations') {
-      const reservationData = req.body
+      const requestData = req.body
       
-      // Generate confirmation ID
-      const confirmationId = `IVY-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
-      
-      const { data, error } = await supabase
-        .from('reservations')
-        .insert([{
-          confirmation_id: confirmationId,
-          guest_name: reservationData.guestName,
-          email: reservationData.email,
-          phone: reservationData.phone,
-          room_number: reservationData.roomNumber,
-          room_type: reservationData.roomType,
-          room_name: reservationData.roomName,
-          check_in: reservationData.checkIn,
-          check_out: reservationData.checkOut,
-          total_amount: reservationData.totalAmount,
-          currency: reservationData.currency,
-          special_requests: reservationData.specialRequests,
-          arrival_time: reservationData.arrivalTime,
-          guest_count: reservationData.guestCount,
-          country: reservationData.country,
-          status: 'confirmed',
-          email_sent: false
-        }])
-        .select()
-        .single()
+      // Handle different operations based on request type
+      if (requestData.operation === 'update' && requestData.id) {
+        // Update operation
+        const { data, error } = await supabase
+          .from('reservations')
+          .update({
+            guest_name: requestData.guestName,
+            email: requestData.email,
+            phone: requestData.phone,
+            room_number: requestData.roomNumber,
+            room_type: requestData.roomType,
+            room_name: requestData.roomName,
+            check_in: requestData.checkIn,
+            check_out: requestData.checkOut,
+            total_amount: requestData.totalAmount,
+            currency: requestData.currency,
+            special_requests: requestData.specialRequests,
+            arrival_time: requestData.arrivalTime,
+            guest_count: requestData.guestCount,
+            country: requestData.country,
+            status: requestData.status,
+            email_sent: requestData.emailSent
+          })
+          .eq('id', requestData.id)
+          .select()
+          .single()
 
-      if (error) {
-        throw error
+        if (error) {
+          throw error
+        }
+
+        if (!data) {
+          return res.status(404).json({
+            success: false,
+            error: 'Reservation not found'
+          })
+        }
+
+        return res.status(200).json({
+          success: true,
+          data: toCamelCaseReservation(data),
+          message: 'Reservation updated successfully'
+        })
+      } else if (requestData.operation === 'delete' && requestData.id) {
+        // Delete operation
+        const { data, error } = await supabase
+          .from('reservations')
+          .delete()
+          .eq('id', requestData.id)
+          .select()
+          .single()
+
+        if (error) {
+          throw error
+        }
+
+        if (!data) {
+          return res.status(404).json({
+            success: false,
+            error: 'Reservation not found'
+          })
+        }
+
+        return res.status(200).json({
+          success: true,
+          data: toCamelCaseReservation(data),
+          message: 'Reservation deleted successfully'
+        })
+      } else {
+        // Create operation (default)
+        const confirmationId = `IVY-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+        
+        const { data, error } = await supabase
+          .from('reservations')
+          .insert([{
+            confirmation_id: confirmationId,
+            guest_name: requestData.guestName,
+            email: requestData.email,
+            phone: requestData.phone,
+            room_number: requestData.roomNumber,
+            room_type: requestData.roomType,
+            room_name: requestData.roomName,
+            check_in: requestData.checkIn,
+            check_out: requestData.checkOut,
+            total_amount: requestData.totalAmount,
+            currency: requestData.currency,
+            special_requests: requestData.specialRequests,
+            arrival_time: requestData.arrivalTime,
+            guest_count: requestData.guestCount,
+            country: requestData.country,
+            status: 'confirmed',
+            email_sent: false
+          }])
+          .select()
+          .single()
+
+        if (error) {
+          throw error
+        }
+
+        return res.status(201).json({
+          success: true,
+          data: toCamelCaseReservation(data),
+          message: 'Reservation created successfully'
+        })
       }
-
-      return res.status(201).json({
-        success: true,
-        data: toCamelCaseReservation(data),
-        message: 'Reservation created successfully'
-      })
     }
 
     // PUT handler for updates (check-in, check-out, edit)

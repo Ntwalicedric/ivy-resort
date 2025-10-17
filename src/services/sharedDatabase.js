@@ -201,13 +201,17 @@ class SharedDatabaseService {
 
   async updateReservation(id, updateData) {
     try {
-      const response = await fetch(`${API_BASE_URL}/${id}`, {
-        method: 'PUT',
+      const response = await fetch(`${API_BASE_URL}`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify(updateData)
+        body: JSON.stringify({
+          operation: 'update',
+          id: id,
+          ...updateData
+        })
       });
       const result = await this.parseResponse(response);
       if (result.success) {
@@ -245,12 +249,16 @@ class SharedDatabaseService {
 
   async deleteReservation(id) {
     try {
-      const response = await fetch(`${API_BASE_URL}/${id}`, {
-        method: 'DELETE',
+      const response = await fetch(`${API_BASE_URL}`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
-        }
+        },
+        body: JSON.stringify({
+          operation: 'delete',
+          id: id
+        })
       });
       const result = await this.parseResponse(response);
       if (result.success) {
