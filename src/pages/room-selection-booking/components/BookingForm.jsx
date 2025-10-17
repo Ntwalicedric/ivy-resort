@@ -151,8 +151,17 @@ const BookingForm = ({
         country: formData.country
       };
       
-      // Create reservation using the API
-      const result = await createReservation(reservationData);
+      // Create reservation using the centralized database API
+      const baseUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL) || '/api';
+      const response = await fetch(`${baseUrl}/reservations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reservationData)
+      });
+
+      const result = await response.json();
       
       if (result.success) {
         // Also send email directly as backup to ensure delivery

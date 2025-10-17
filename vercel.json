@@ -2,6 +2,14 @@
   "version": 2,
   "buildCommand": "npm run build",
   "outputDirectory": "build",
+  "functions": {
+    "api/database.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/reservations.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
   "rewrites": [
     {
       "source": "/((?!assets/|api/).*)",

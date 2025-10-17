@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDatabase } from '../../context/DatabaseContext';
+import realtimeSyncService from '../../services/realtimeSync';
 import { 
   Plus,
   Edit,
@@ -19,7 +20,9 @@ import {
   CheckCircle,
   XCircle,
   LogIn,
-  AlertCircle
+  AlertCircle,
+  Wifi,
+  WifiOff
 } from 'lucide-react';
 import AdminNavigation from '../../components/ui/AdminNavigation';
 import EnhancedFilterPanel from './components/EnhancedFilterPanel';
@@ -45,10 +48,79 @@ const AdminDashboard = () => {
     resendConfirmationEmail
   } = useDatabase();
   
+  // Real-time sync state
+  const [syncStatus, setSyncStatus] = useState({
+    isOnline: true,
+    isPolling: false,
+    lastSync: null,
+    retryCount: 0
+  });
+  
   console.log('AdminDashboard: useDatabase hook completed');
   console.log('AdminDashboard: reservations count:', reservations?.length || 0);
   console.log('AdminDashboard: loading state:', loading);
   
+  // Real-time sync setup
+  useEffect(() => {
+    console.log('🔄 AdminDashboard: Setting up real-time sync...');
+    
+    // Start real-time polling
+    realtimeSyncService.startPolling();
+    
+    // Set up sync listener
+    const removeListener = realtimeSyncService.addListener((event) => {
+      console.log('📡 AdminDashboard: Sync event received:', event);
+      
+      switch (event.type) {
+        case 'sync_success':
+          // Refresh data from database context
+          refreshData();
+          setSyncStatus(prev => ({
+            ...prev,
+            isPolling: true,
+            lastSync: event.timestamp,
+            retryCount: 0
+          }));
+          break;
+          
+        case 'sync_error':
+          setSyncStatus(prev => ({
+            ...prev,
+            retryCount: event.retryCount
+          }));
+          break;
+          
+        case 'connection_status':
+          setSyncStatus(prev => ({
+            ...prev,
+            isOnline: event.isOnline
+          }));
+          break;
+      }
+    });
+    
+    // Update sync status
+    setSyncStatus(realtimeSyncService.getStatus());
+    
+    // Cleanup on unmount
+    return () => {
+      console.log('🛑 AdminDashboard: Cleaning up real-time sync...');
+      removeListener();
+      realtimeSyncService.stopPolling();
+    };
+  }, [refreshData]);
+  
+  // Manual refresh function
+  const handleManualRefresh = async () => {
+    console.log('🔄 AdminDashboard: Manual refresh triggered');
+    try {
+      await realtimeSyncService.forceSync();
+      await refreshData();
+    } catch (error) {
+      console.error('❌ AdminDashboard: Manual refresh failed:', error);
+    }
+  };
+
   // Error boundary for debugging
   try {
     console.log('AdminDashboard: About to render main content');
@@ -415,6 +487,44 @@ const AdminDashboard = () => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Real-time Sync Status */}
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-3xl font-bold text-slate-800">Reservations Management</h1>
+            <div className="flex items-center space-x-2">
+              {syncStatus.isOnline ? (
+                <div className="flex items-center space-x-1 text-green-600">
+                  <Wifi size={16} />
+                  <span className="text-sm">Online</span>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-1 text-red-600">
+                  <WifiOff size={16} />
+                  <span className="text-sm">Offline</span>
+                </div>
+              )}
+              {syncStatus.isPolling && (
+                <div className="flex items-center space-x-1 text-blue-600">
+                  <RefreshCw size={16} className="animate-spin" />
+                  <span className="text-sm">Syncing...</span>
+                </div>
+              )}
+              {syncStatus.lastSync && (
+                <div className="text-xs text-slate-500">
+                  Last sync: {new Date(syncStatus.lastSync).toLocaleTimeString()}
+                </div>
+              )}
+            </div>
+          </div>
+          <button
+            onClick={handleManualRefresh}
+            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <RefreshCw size={16} />
+            <span>Refresh</span>
+          </button>
+        </div>
+
         {/* Enhanced Filter Panel */}
         <EnhancedFilterPanel
           searchTerm={searchTerm}
