@@ -11,6 +11,58 @@ if (!supabaseUrl || !supabaseServiceKey) {
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
+// Helpers: map camelCase <-> snake_case
+function toSnakeCaseReservation(input = {}) {
+  return {
+    confirmation_id: input.confirmationId || input.confirmationID || input.reservationId || input.id,
+    guest_name: input.guestName,
+    email: input.email,
+    phone: input.phone,
+    room_number: input.roomNumber,
+    room_type: input.roomType,
+    room_name: input.roomName,
+    check_in: input.checkIn,
+    check_out: input.checkOut,
+    total_amount: input.totalAmount,
+    currency: input.currency,
+    total_amount_in_currency: input.totalAmountInCurrency,
+    total_amount_display: input.totalAmountDisplay,
+    special_requests: input.specialRequests,
+    arrival_time: input.arrivalTime,
+    guest_count: input.guestCount,
+    country: input.country,
+    status: input.status,
+    email_sent: input.emailSent
+  }
+}
+
+function toCamelCaseReservation(row = {}) {
+  return {
+    id: row.id,
+    confirmationId: row.confirmation_id,
+    guestName: row.guest_name,
+    email: row.email,
+    phone: row.phone,
+    roomNumber: row.room_number,
+    roomType: row.room_type,
+    roomName: row.room_name,
+    checkIn: row.check_in,
+    checkOut: row.check_out,
+    totalAmount: row.total_amount,
+    currency: row.currency,
+    totalAmountInCurrency: row.total_amount_in_currency,
+    totalAmountDisplay: row.total_amount_display,
+    specialRequests: row.special_requests,
+    arrivalTime: row.arrival_time,
+    guestCount: row.guest_count,
+    country: row.country,
+    status: row.status,
+    emailSent: row.email_sent,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at
+  }
+}
+
 export default async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -88,7 +140,7 @@ async function handleGetReservations(req, res) {
 
     res.status(200).json({
       success: true,
-      data: data || [],
+      data: (data || []).map(toCamelCaseReservation),
       timestamp: new Date().toISOString(),
       count: data?.length || 0
     })
@@ -117,15 +169,16 @@ async function handleCreateReservation(req, res) {
       }
     }
 
-    // Generate confirmation ID
-    const confirmationId = `IVY-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`
+    // Generate/normalize confirmation ID and map to DB columns
+    const generatedConfirmationId = `IVY-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`
+    const dbRow = toSnakeCaseReservation({
+      ...reservationData,
+      confirmationId: reservationData.confirmationId || generatedConfirmationId
+    })
 
     const { data, error } = await supabase
       .from('reservations')
-      .insert([{
-        ...reservationData,
-        confirmation_id: confirmationId
-      }])
+      .insert([dbRow])
       .select()
       .single()
 
@@ -135,7 +188,7 @@ async function handleCreateReservation(req, res) {
 
     res.status(201).json({
       success: true,
-      data: data,
+      data: toCamelCaseReservation(data),
       message: 'Reservation created successfully'
     })
   } catch (error) {
@@ -185,7 +238,7 @@ async function handleUpdateReservation(req, res) {
 
     res.status(200).json({
       success: true,
-      data: data,
+      data: toCamelCaseReservation(data),
       message: 'Reservation updated successfully'
     })
   } catch (error) {
@@ -230,7 +283,7 @@ async function handleDeleteReservation(req, res) {
 
     res.status(200).json({
       success: true,
-      data: data,
+      data: toCamelCaseReservation(data),
       message: 'Reservation deleted successfully'
     })
   } catch (error) {
