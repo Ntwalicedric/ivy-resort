@@ -125,27 +125,17 @@ async function handler(req, res) {
         })
       } else if (requestData.operation === 'delete' && requestData.id) {
         // Delete operation
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('reservations')
           .delete()
           .eq('id', requestData.id)
-          .select()
-          .single()
 
         if (error) {
           throw error
         }
 
-        if (!data) {
-          return res.status(404).json({
-            success: false,
-            error: 'Reservation not found'
-          })
-        }
-
         return res.status(200).json({
           success: true,
-          data: toCamelCaseReservation(data),
           message: 'Reservation deleted successfully'
         })
       } else {
