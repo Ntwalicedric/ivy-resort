@@ -57,7 +57,8 @@ const BookingSuccess = ({ bookingData, onClose }) => {
     setResendResult(null);
     try {
       const reservation = buildReservationForEmail();
-      const response = await fetch('/api/send-email', {
+      const baseUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_EMAIL_API_URL) || '/api';
+      const response = await fetch(`${baseUrl}/send-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reservation })
