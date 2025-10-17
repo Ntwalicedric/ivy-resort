@@ -80,6 +80,8 @@ async function handler(req, res) {
     if (method === 'POST' && path === '/api/supabase-reservations') {
       const requestData = req.body
       
+      console.log('POST request received:', { requestData, operation: requestData.operation, id: requestData.id })
+      
       // Handle different operations based on request type
       if (requestData.operation === 'update' && requestData.id) {
         // Update operation - return success without actually updating due to constraint issues
