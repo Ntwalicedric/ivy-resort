@@ -81,27 +81,28 @@ async function handler(req, res) {
       
       // Handle different operations based on request type
       if (requestData.operation === 'update' && requestData.id) {
-        // Update operation
+        // Update operation - only update provided fields
+        const updateFields = {}
+        if (requestData.guestName !== undefined) updateFields.guest_name = requestData.guestName
+        if (requestData.email !== undefined) updateFields.email = requestData.email
+        if (requestData.phone !== undefined) updateFields.phone = requestData.phone
+        if (requestData.roomNumber !== undefined) updateFields.room_number = requestData.roomNumber
+        if (requestData.roomType !== undefined) updateFields.room_type = requestData.roomType
+        if (requestData.roomName !== undefined) updateFields.room_name = requestData.roomName
+        if (requestData.checkIn !== undefined) updateFields.check_in = requestData.checkIn
+        if (requestData.checkOut !== undefined) updateFields.check_out = requestData.checkOut
+        if (requestData.totalAmount !== undefined) updateFields.total_amount = requestData.totalAmount
+        if (requestData.currency !== undefined) updateFields.currency = requestData.currency
+        if (requestData.specialRequests !== undefined) updateFields.special_requests = requestData.specialRequests
+        if (requestData.arrivalTime !== undefined) updateFields.arrival_time = requestData.arrivalTime
+        if (requestData.guestCount !== undefined) updateFields.guest_count = requestData.guestCount
+        if (requestData.country !== undefined) updateFields.country = requestData.country
+        if (requestData.status !== undefined) updateFields.status = requestData.status
+        if (requestData.emailSent !== undefined) updateFields.email_sent = requestData.emailSent
+
         const { data, error } = await supabase
           .from('reservations')
-          .update({
-            guest_name: requestData.guestName,
-            email: requestData.email,
-            phone: requestData.phone,
-            room_number: requestData.roomNumber,
-            room_type: requestData.roomType,
-            room_name: requestData.roomName,
-            check_in: requestData.checkIn,
-            check_out: requestData.checkOut,
-            total_amount: requestData.totalAmount,
-            currency: requestData.currency,
-            special_requests: requestData.specialRequests,
-            arrival_time: requestData.arrivalTime,
-            guest_count: requestData.guestCount,
-            country: requestData.country,
-            status: requestData.status,
-            email_sent: requestData.emailSent
-          })
+          .update(updateFields)
           .eq('id', requestData.id)
           .select()
           .single()
