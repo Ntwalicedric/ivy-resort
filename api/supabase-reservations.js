@@ -212,7 +212,14 @@ async function handler(req, res) {
       })
     }
 
-    return res.status(404).json({ error: 'Endpoint not found' })
+    // Debug: log all unmatched requests
+    console.log('Unmatched request:', { method, path, url: req.url })
+    return res.status(404).json({ 
+      error: 'Endpoint not found',
+      method,
+      path,
+      url: req.url
+    })
 
   } catch (error) {
     console.error('Supabase API Error:', error)
