@@ -99,7 +99,7 @@ async function handler(req, res) {
           })
         }
 
-        // Merge current data with update data
+        // Merge current data with update data - ensure no null values for required fields
         const updatedData = {
           confirmation_id: currentData.confirmation_id,
           guest_name: requestData.guestName !== undefined ? requestData.guestName : currentData.guest_name,
@@ -118,6 +118,14 @@ async function handler(req, res) {
           country: requestData.country !== undefined ? requestData.country : currentData.country,
           status: requestData.status !== undefined ? requestData.status : currentData.status,
           email_sent: requestData.emailSent !== undefined ? requestData.emailSent : currentData.email_sent
+        }
+
+        // Validate that required fields are not null
+        if (!updatedData.guest_name || !updatedData.email || !updatedData.room_name || !updatedData.check_in || !updatedData.check_out || !updatedData.total_amount) {
+          return res.status(400).json({
+            success: false,
+            error: 'Required fields cannot be null: guest_name, email, room_name, check_in, check_out, total_amount'
+          })
         }
 
         // Delete the old record
@@ -165,24 +173,32 @@ async function handler(req, res) {
         // Create operation (default)
         const confirmationId = `IVY-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
         
+        // Validate required fields
+        if (!requestData.guestName || !requestData.email || !requestData.roomName || !requestData.checkIn || !requestData.checkOut || !requestData.totalAmount) {
+          return res.status(400).json({
+            success: false,
+            error: 'Missing required fields: guestName, email, roomName, checkIn, checkOut, totalAmount'
+          })
+        }
+        
         const { data, error } = await supabase
           .from('reservations')
           .insert([{
             confirmation_id: confirmationId,
             guest_name: requestData.guestName,
             email: requestData.email,
-            phone: requestData.phone,
-            room_number: requestData.roomNumber,
-            room_type: requestData.roomType,
+            phone: requestData.phone || null,
+            room_number: requestData.roomNumber || null,
+            room_type: requestData.roomType || null,
             room_name: requestData.roomName,
             check_in: requestData.checkIn,
             check_out: requestData.checkOut,
             total_amount: requestData.totalAmount,
-            currency: requestData.currency,
-            special_requests: requestData.specialRequests,
-            arrival_time: requestData.arrivalTime,
-            guest_count: requestData.guestCount,
-            country: requestData.country,
+            currency: requestData.currency || 'USD',
+            special_requests: requestData.specialRequests || null,
+            arrival_time: requestData.arrivalTime || null,
+            guest_count: requestData.guestCount || 1,
+            country: requestData.country || null,
             status: 'confirmed',
             email_sent: false
           }])
