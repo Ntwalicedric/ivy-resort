@@ -54,7 +54,7 @@ async function handler(req, res) {
     const url = new URL(req.url, `http://${req.headers.host}`)
     const path = url.pathname
 
-    console.log('Supabase API called:', { method, path })
+    console.log('Supabase API called:', { method, path, url: req.url })
 
     // Simple GET handler
     if (method === 'GET' && path === '/api/supabase-reservations') {
@@ -119,7 +119,9 @@ async function handler(req, res) {
 
     // PUT handler for updates (check-in, check-out, edit)
     if (method === 'PUT' && path.startsWith('/api/supabase-reservations/')) {
+      console.log('PUT handler matched:', { method, path })
       const id = path.split('/').pop()
+      console.log('Extracted ID:', id)
       
       if (!id || isNaN(id)) {
         return res.status(400).json({
