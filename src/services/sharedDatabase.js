@@ -20,6 +20,15 @@ class SharedDatabaseService {
     });
   }
 
+  async parseResponse(response) {
+    const contentType = response.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+      return await response.json();
+    }
+    const text = await response.text();
+    return response.ok ? { success: true, message: text } : { success: false, error: text };
+  }
+
   // Initialize the shared database service
   initialize() {
     console.log('Shared Database Service: Initializing...');
@@ -66,7 +75,7 @@ class SharedDatabaseService {
   async syncReservations() {
     try {
       const response = await fetch(`${API_BASE_URL}`);
-      const result = await response.json();
+      const result = await this.parseResponse(response);
       
       if (result.success) {
         // Store in localStorage for offline access
@@ -104,7 +113,7 @@ class SharedDatabaseService {
   async getReservations() {
     try {
       const response = await fetch(`${API_BASE_URL}`);
-      const result = await response.json();
+      const result = await this.parseResponse(response);
       return result.success ? result.data : [];
     } catch (error) {
       console.warn('Shared Database Service: Failed to get reservations:', error);
@@ -174,11 +183,11 @@ class SharedDatabaseService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify(reservationData)
       });
-      
-      const result = await response.json();
+      const result = await this.parseResponse(response);
       if (result.success) {
         // Trigger sync to update all devices
         await this.triggerSync();
@@ -196,11 +205,11 @@ class SharedDatabaseService {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify(updateData)
       });
-      
-      const result = await response.json();
+      const result = await this.parseResponse(response);
       if (result.success) {
         // Trigger sync to update all devices
         await this.triggerSync();
@@ -218,11 +227,11 @@ class SharedDatabaseService {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({ status: 'cancelled' })
       });
-      
-      const result = await response.json();
+      const result = await this.parseResponse(response);
       if (result.success) {
         // Trigger sync to update all devices
         await this.triggerSync();
@@ -267,11 +276,11 @@ class SharedDatabaseService {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({ status: 'checked-in' })
       });
-      
-      const result = await response.json();
+      const result = await this.parseResponse(response);
       if (result.success) {
         // Trigger sync to update all devices
         await this.triggerSync();
@@ -289,11 +298,11 @@ class SharedDatabaseService {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({ status: 'checked-out' })
       });
-      
-      const result = await response.json();
+      const result = await this.parseResponse(response);
       if (result.success) {
         // Trigger sync to update all devices
         await this.triggerSync();

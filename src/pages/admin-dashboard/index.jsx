@@ -255,19 +255,16 @@ const AdminDashboard = () => {
   };
 
   // Handle clear all reservations
-  const handleClearAllReservations = () => {
+  const handleClearAllReservations = async () => {
     if (window.confirm('Are you sure you want to clear ALL reservations? This action cannot be undone.')) {
       try {
-        // Clear from localStorage
-        localStorage.removeItem('ivy_resort_reservations');
-        
-        // Clear from context
-        refreshData();
-        
-        // Show success notification
-        showNotification('All reservations cleared successfully!', 'success');
-        
-        console.log('All reservations cleared');
+        const result = await sharedDatabase.clearAllReservations?.();
+        if (result?.success) {
+          await refreshData();
+          showNotification('All reservations cleared successfully!', 'success');
+        } else {
+          showNotification('Error clearing reservations: ' + (result?.error || 'Unknown error'), 'error');
+        }
       } catch (error) {
         console.error('Error clearing reservations:', error);
         showNotification('Error clearing reservations', 'error');
