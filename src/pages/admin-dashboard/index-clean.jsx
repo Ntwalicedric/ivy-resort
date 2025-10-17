@@ -235,13 +235,13 @@ const AdminDashboard = () => {
     console.log('handleSaveEdit called with:', { formData, selectedReservation });
     setIsSubmitting(true);
     try {
-      const result = await updateReservation(selectedReservation.id, formData);
+      const result = await sharedDatabase.updateReservation(selectedReservation.id, formData);
       console.log('updateReservation result:', result);
       if (result.success) {
         showNotification('Reservation updated successfully!', 'success');
         setIsEditModalOpen(false);
       } else {
-        showNotification('Failed to update reservation: ' + result.error, 'error');
+        showNotification('Failed to update reservation: ' + (result.error || result.message || 'Unknown error'), 'error');
       }
     } catch (error) {
       console.error('Error in handleSaveEdit:', error);
@@ -261,7 +261,7 @@ const AdminDashboard = () => {
         if (result.success) {
           showNotification('Reservation deleted successfully!', 'success');
         } else {
-          showNotification('Failed to delete reservation: ' + result.error, 'error');
+          showNotification('Failed to delete reservation: ' + (result.error || result.message || 'Unknown error'), 'error');
         }
       } catch (error) {
         console.error('Error in handleDelete:', error);
@@ -275,12 +275,12 @@ const AdminDashboard = () => {
     console.log('handleCheckIn called with reservationId:', reservationId);
     if (window.confirm('Check in this guest?')) {
       try {
-        const result = await checkInReservation(reservationId);
+        const result = await sharedDatabase.updateReservation(reservationId, { status: 'checked-in' });
         console.log('checkInReservation result:', result);
         if (result.success) {
           showNotification('Guest checked in successfully!', 'success');
         } else {
-          showNotification('Failed to check in guest: ' + result.error, 'error');
+          showNotification('Failed to check in guest: ' + (result.error || result.message || 'Unknown error'), 'error');
         }
       } catch (error) {
         console.error('Error in handleCheckIn:', error);
@@ -294,12 +294,12 @@ const AdminDashboard = () => {
     console.log('handleCheckOut called with reservationId:', reservationId);
     if (window.confirm('Check out this guest?')) {
       try {
-        const result = await checkOutReservation(reservationId);
+        const result = await sharedDatabase.updateReservation(reservationId, { status: 'checked-out' });
         console.log('checkOutReservation result:', result);
         if (result.success) {
           showNotification('Guest checked out successfully!', 'success');
         } else {
-          showNotification('Failed to check out guest: ' + result.error, 'error');
+          showNotification('Failed to check out guest: ' + (result.error || result.message || 'Unknown error'), 'error');
         }
       } catch (error) {
         console.error('Error in handleCheckOut:', error);
