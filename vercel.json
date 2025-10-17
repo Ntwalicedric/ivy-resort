@@ -3,14 +3,8 @@
   "buildCommand": "npm run build",
   "outputDirectory": "build",
   "functions": {
-    "api/database.js": {
-      "runtime": "nodejs18.x"
-    },
-    "api/reservations.js": {
-      "runtime": "nodejs18.x"
-    },
-    "api/supabase-reservations.js": {
-      "runtime": "nodejs18.x"
+    "api/*.js": {
+      "runtime": "nodejs20.x"
     }
   },
   "rewrites": [
