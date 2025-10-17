@@ -130,15 +130,21 @@ async function handler(req, res) {
           .update(updateFields)
           .eq('id', requestData.id)
           .select()
-          .single()
 
         if (error) {
           throw error
         }
 
+        if (!data || data.length === 0) {
+          return res.status(404).json({
+            success: false,
+            error: 'Reservation not found'
+          })
+        }
+
         return res.status(200).json({
           success: true,
-          data: toCamelCaseReservation(data),
+          data: toCamelCaseReservation(data[0]),
           message: 'Reservation updated successfully'
         })
       } else if (requestData.operation === 'delete' && requestData.id) {
@@ -148,13 +154,12 @@ async function handler(req, res) {
           .update({ status: 'deleted' })
           .eq('id', requestData.id)
           .select()
-          .single()
 
         if (error) {
           throw error
         }
 
-        if (!data) {
+        if (!data || data.length === 0) {
           return res.status(404).json({
             success: false,
             error: 'Reservation not found'
@@ -163,7 +168,7 @@ async function handler(req, res) {
 
         return res.status(200).json({
           success: true,
-          data: toCamelCaseReservation(data),
+          data: toCamelCaseReservation(data[0]),
           message: 'Reservation deleted successfully'
         })
       } else {
