@@ -81,24 +81,43 @@ async function handler(req, res) {
       
       // Handle different operations based on request type
       if (requestData.operation === 'update' && requestData.id) {
-        // Update operation - only update provided fields
-        const updateFields = {}
-        if (requestData.guestName !== undefined) updateFields.guest_name = requestData.guestName
-        if (requestData.email !== undefined) updateFields.email = requestData.email
-        if (requestData.phone !== undefined) updateFields.phone = requestData.phone
-        if (requestData.roomNumber !== undefined) updateFields.room_number = requestData.roomNumber
-        if (requestData.roomType !== undefined) updateFields.room_type = requestData.roomType
-        if (requestData.roomName !== undefined) updateFields.room_name = requestData.roomName
-        if (requestData.checkIn !== undefined) updateFields.check_in = requestData.checkIn
-        if (requestData.checkOut !== undefined) updateFields.check_out = requestData.checkOut
-        if (requestData.totalAmount !== undefined) updateFields.total_amount = requestData.totalAmount
-        if (requestData.currency !== undefined) updateFields.currency = requestData.currency
-        if (requestData.specialRequests !== undefined) updateFields.special_requests = requestData.specialRequests
-        if (requestData.arrivalTime !== undefined) updateFields.arrival_time = requestData.arrivalTime
-        if (requestData.guestCount !== undefined) updateFields.guest_count = requestData.guestCount
-        if (requestData.country !== undefined) updateFields.country = requestData.country
-        if (requestData.status !== undefined) updateFields.status = requestData.status
-        if (requestData.emailSent !== undefined) updateFields.email_sent = requestData.emailSent
+        // Update operation - fetch current record first, then update with merged data
+        const { data: currentData, error: fetchError } = await supabase
+          .from('reservations')
+          .select('*')
+          .eq('id', requestData.id)
+          .single()
+
+        if (fetchError) {
+          throw fetchError
+        }
+
+        if (!currentData) {
+          return res.status(404).json({
+            success: false,
+            error: 'Reservation not found'
+          })
+        }
+
+        // Merge current data with update data
+        const updateFields = {
+          guest_name: requestData.guestName !== undefined ? requestData.guestName : currentData.guest_name,
+          email: requestData.email !== undefined ? requestData.email : currentData.email,
+          phone: requestData.phone !== undefined ? requestData.phone : currentData.phone,
+          room_number: requestData.roomNumber !== undefined ? requestData.roomNumber : currentData.room_number,
+          room_type: requestData.roomType !== undefined ? requestData.roomType : currentData.room_type,
+          room_name: requestData.roomName !== undefined ? requestData.roomName : currentData.room_name,
+          check_in: requestData.checkIn !== undefined ? requestData.checkIn : currentData.check_in,
+          check_out: requestData.checkOut !== undefined ? requestData.checkOut : currentData.check_out,
+          total_amount: requestData.totalAmount !== undefined ? requestData.totalAmount : currentData.total_amount,
+          currency: requestData.currency !== undefined ? requestData.currency : currentData.currency,
+          special_requests: requestData.specialRequests !== undefined ? requestData.specialRequests : currentData.special_requests,
+          arrival_time: requestData.arrivalTime !== undefined ? requestData.arrivalTime : currentData.arrival_time,
+          guest_count: requestData.guestCount !== undefined ? requestData.guestCount : currentData.guest_count,
+          country: requestData.country !== undefined ? requestData.country : currentData.country,
+          status: requestData.status !== undefined ? requestData.status : currentData.status,
+          email_sent: requestData.emailSent !== undefined ? requestData.emailSent : currentData.email_sent
+        }
 
         const { data, error } = await supabase
           .from('reservations')
@@ -109,13 +128,6 @@ async function handler(req, res) {
 
         if (error) {
           throw error
-        }
-
-        if (!data) {
-          return res.status(404).json({
-            success: false,
-            error: 'Reservation not found'
-          })
         }
 
         return res.status(200).json({
