@@ -1,5 +1,5 @@
 // Supabase-based reservations API
-import { createClient } from '@supabase/supabase-js'
+const { createClient } = require('@supabase/supabase-js')
 
 // Initialize Supabase client
 const supabaseUrl = process.env.SUPABASE_URL
@@ -349,4 +349,4 @@ async function handleGetStats(req, res) {
   }
 }
 
-export default handler
+module.exports = handler

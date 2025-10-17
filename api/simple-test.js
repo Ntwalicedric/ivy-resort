@@ -1,5 +1,5 @@
 // Simple test to isolate the Supabase issue
-export default async function handler(req, res) {
+async function handler(req, res) {
   try {
     console.log('Simple test function called');
     
@@ -20,7 +20,7 @@ export default async function handler(req, res) {
     
     // Test Supabase client creation
     try {
-      const { createClient } = await import('@supabase/supabase-js');
+      const { createClient } = require('@supabase/supabase-js');
       const supabase = createClient(supabaseUrl, supabaseServiceKey);
       console.log('Supabase client created successfully');
       
@@ -58,3 +58,5 @@ export default async function handler(req, res) {
     });
   }
 }
+
+module.exports = handler
