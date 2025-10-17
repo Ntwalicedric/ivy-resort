@@ -227,13 +227,17 @@ class SharedDatabaseService {
 
   async cancelReservation(id) {
     try {
-      const response = await fetch(`${API_BASE_URL}/${id}`, {
-        method: 'PUT',
+      const response = await fetch(`${API_BASE_URL}`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify({ status: 'cancelled' })
+        body: JSON.stringify({
+          operation: 'update',
+          id: id,
+          status: 'cancelled'
+        })
       });
       const result = await this.parseResponse(response);
       if (result.success) {
@@ -273,13 +277,17 @@ class SharedDatabaseService {
 
   async checkInReservation(id) {
     try {
-      const response = await fetch(`${API_BASE_URL}/${id}`, {
-        method: 'PUT',
+      const response = await fetch(`${API_BASE_URL}`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify({ status: 'checked-in' })
+        body: JSON.stringify({
+          operation: 'update',
+          id: id,
+          status: 'checked-in'
+        })
       });
       const result = await this.parseResponse(response);
       if (result.success) {
@@ -295,13 +303,17 @@ class SharedDatabaseService {
 
   async checkOutReservation(id) {
     try {
-      const response = await fetch(`${API_BASE_URL}/${id}`, {
-        method: 'PUT',
+      const response = await fetch(`${API_BASE_URL}`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify({ status: 'checked-out' })
+        body: JSON.stringify({
+          operation: 'update',
+          id: id,
+          status: 'checked-out'
+        })
       });
       const result = await this.parseResponse(response);
       if (result.success) {
