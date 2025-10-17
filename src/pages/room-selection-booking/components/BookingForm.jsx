@@ -152,8 +152,8 @@ const BookingForm = ({
       };
       
       // Create reservation using Supabase API
-      const baseUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL) || '/api';
-      const response = await fetch(`${baseUrl}/supabase-reservations`, {
+      const apiBaseUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL) || '/api';
+      const response = await fetch(`${apiBaseUrl}/supabase-reservations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -168,8 +168,8 @@ const BookingForm = ({
         let directEmailResult = { success: false, message: 'Direct email not attempted' };
         try {
           console.log('📧 BookingForm: Sending direct confirmation email...');
-          const baseUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_EMAIL_API_URL) || '/api';
-          const emailResponse = await fetch(`${baseUrl}/send-email`, {
+          const emailBaseUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_EMAIL_API_URL) || '/api';
+          const emailResponse = await fetch(`${emailBaseUrl}/send-email`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
