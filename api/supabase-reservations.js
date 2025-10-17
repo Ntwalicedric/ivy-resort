@@ -120,6 +120,7 @@ async function handler(req, res) {
           email_sent: requestData.emailSent !== undefined ? requestData.emailSent : currentData.email_sent
         }
 
+        console.log('Current data from DB:', currentData)
         console.log('Update data being inserted:', updatedData)
 
         // Validate that required fields are not null
