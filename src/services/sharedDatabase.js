@@ -1,7 +1,7 @@
 // Shared Database Service for cross-device data synchronization
 // This service communicates with the shared database API
 
-const API_BASE_URL = '/api/shared-database';
+const API_BASE_URL = '/api/supabase-reservations';
 
 class SharedDatabaseService {
   constructor() {
@@ -65,7 +65,7 @@ class SharedDatabaseService {
   // Sync reservations with shared database
   async syncReservations() {
     try {
-      const response = await fetch(`${API_BASE_URL}?action=get&type=reservations`);
+      const response = await fetch(`${API_BASE_URL}`);
       const result = await response.json();
       
       if (result.success) {
@@ -103,7 +103,7 @@ class SharedDatabaseService {
   // API Methods
   async getReservations() {
     try {
-      const response = await fetch(`${API_BASE_URL}?action=get&type=reservations`);
+      const response = await fetch(`${API_BASE_URL}`);
       const result = await response.json();
       return result.success ? result.data : [];
     } catch (error) {
@@ -170,7 +170,7 @@ class SharedDatabaseService {
   // CRUD Operations
   async createReservation(reservationData) {
     try {
-      const response = await fetch(`${API_BASE_URL}?action=create&type=reservations`, {
+      const response = await fetch(`${API_BASE_URL}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -192,7 +192,7 @@ class SharedDatabaseService {
 
   async updateReservation(id, updateData) {
     try {
-      const response = await fetch(`${API_BASE_URL}?action=update&type=reservations&id=${id}`, {
+      const response = await fetch(`${API_BASE_URL}/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -214,7 +214,7 @@ class SharedDatabaseService {
 
   async cancelReservation(id) {
     try {
-      const response = await fetch(`${API_BASE_URL}?action=update&type=reservations&id=${id}`, {
+      const response = await fetch(`${API_BASE_URL}/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -236,7 +236,7 @@ class SharedDatabaseService {
 
   async checkInReservation(id) {
     try {
-      const response = await fetch(`${API_BASE_URL}?action=update&type=reservations&id=${id}`, {
+      const response = await fetch(`${API_BASE_URL}/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -258,7 +258,7 @@ class SharedDatabaseService {
 
   async checkOutReservation(id) {
     try {
-      const response = await fetch(`${API_BASE_URL}?action=update&type=reservations&id=${id}`, {
+      const response = await fetch(`${API_BASE_URL}/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
