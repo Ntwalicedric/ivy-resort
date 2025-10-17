@@ -240,9 +240,17 @@ class SharedDatabaseService {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         }
       });
-      const result = await response.json();
+      const contentType = response.headers.get('content-type') || '';
+      let result;
+      if (contentType.includes('application/json')) {
+        result = await response.json();
+      } else {
+        const text = await response.text();
+        result = response.ok ? { success: true, message: text } : { success: false, error: text };
+      }
       if (result.success) {
         await this.triggerSync();
       }
