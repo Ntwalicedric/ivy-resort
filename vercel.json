@@ -8,6 +8,9 @@
     },
     "api/reservations.js": {
       "runtime": "nodejs18.x"
+    },
+    "api/supabase-reservations.js": {
+      "runtime": "nodejs18.x"
     }
   },
   "rewrites": [

@@ -1,0 +1,25 @@
+# Supabase Configuration
+# Copy this file to .env.local and fill in your Supabase credentials
+
+# Supabase Project URL (from Settings > API)
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+
+# Supabase Anon/Public Key (from Settings > API)
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
+
+# Supabase Service Role Key (from Settings > API) - for server-side operations
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
+
+# Supabase Project URL for server-side (same as VITE_SUPABASE_URL)
+SUPABASE_URL=https://your-project-id.supabase.co
+
+# Email Configuration (keep existing)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=ivyresort449@gmail.com
+SMTP_PASS=wiib wjje onsi tmri
+MAIL_FROM="Ivy Resort <no-reply@ivyresort.com>"
+
+# API Base URL (optional, defaults to /api)
+VITE_API_BASE_URL=/api

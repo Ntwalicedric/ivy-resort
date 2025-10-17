@@ -151,9 +151,9 @@ const BookingForm = ({
         country: formData.country
       };
       
-      // Create reservation using the centralized database API
+      // Create reservation using Supabase API
       const baseUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL) || '/api';
-      const response = await fetch(`${baseUrl}/reservations`, {
+      const response = await fetch(`${baseUrl}/supabase-reservations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

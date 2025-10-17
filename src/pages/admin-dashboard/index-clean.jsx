@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDatabase } from '../../context/DatabaseContext';
-import realtimeSyncService from '../../services/realtimeSync';
+import supabaseRealtimeSyncService from '../../services/supabaseRealtimeSync';
 import { 
   Plus,
   Edit,
@@ -60,24 +60,34 @@ const AdminDashboard = () => {
   console.log('AdminDashboard: reservations count:', reservations?.length || 0);
   console.log('AdminDashboard: loading state:', loading);
   
-  // Real-time sync setup
+  // Supabase real-time sync setup
   useEffect(() => {
-    console.log('🔄 AdminDashboard: Setting up real-time sync...');
+    console.log('🔄 AdminDashboard: Setting up Supabase real-time sync...');
     
-    // Start real-time polling
-    realtimeSyncService.startPolling();
+    // Start real-time subscription
+    supabaseRealtimeSyncService.startSync();
     
     // Set up sync listener
-    const removeListener = realtimeSyncService.addListener((event) => {
-      console.log('📡 AdminDashboard: Sync event received:', event);
+    const removeListener = supabaseRealtimeSyncService.addListener((event) => {
+      console.log('📡 AdminDashboard: Supabase real-time event received:', event);
       
       switch (event.type) {
-        case 'sync_success':
+        case 'realtime_update':
           // Refresh data from database context
           refreshData();
           setSyncStatus(prev => ({
             ...prev,
             isPolling: true,
+            lastSync: event.timestamp,
+            retryCount: 0
+          }));
+          break;
+          
+        case 'force_refresh':
+          // Update with fresh data
+          refreshData();
+          setSyncStatus(prev => ({
+            ...prev,
             lastSync: event.timestamp,
             retryCount: 0
           }));
@@ -93,20 +103,21 @@ const AdminDashboard = () => {
         case 'connection_status':
           setSyncStatus(prev => ({
             ...prev,
-            isOnline: event.isOnline
+            isOnline: event.isOnline,
+            isPolling: event.isConnected
           }));
           break;
       }
     });
     
     // Update sync status
-    setSyncStatus(realtimeSyncService.getStatus());
+    setSyncStatus(supabaseRealtimeSyncService.getStatus());
     
     // Cleanup on unmount
     return () => {
-      console.log('🛑 AdminDashboard: Cleaning up real-time sync...');
+      console.log('🛑 AdminDashboard: Cleaning up Supabase real-time sync...');
       removeListener();
-      realtimeSyncService.stopPolling();
+      supabaseRealtimeSyncService.stopSync();
     };
   }, [refreshData]);
   
@@ -114,7 +125,7 @@ const AdminDashboard = () => {
   const handleManualRefresh = async () => {
     console.log('🔄 AdminDashboard: Manual refresh triggered');
     try {
-      await realtimeSyncService.forceSync();
+      await supabaseRealtimeSyncService.forceRefresh();
       await refreshData();
     } catch (error) {
       console.error('❌ AdminDashboard: Manual refresh failed:', error);

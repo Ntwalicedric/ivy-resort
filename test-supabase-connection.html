@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Connection Test</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Supabase Connection Test</h1>
+    
+    <div id="status"></div>
+    
+    <button onclick="testConnection()">Test Connection</button>
+    <button onclick="testRealtime()">Test Real-time</button>
+    <button onclick="testInsert()">Test Insert</button>
+    
+    <div id="results"></div>
+
+    <script>
+        // Your Supabase credentials
+        const SUPABASE_URL = 'https://roaybczclwzxxjnmkorp.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJvYXliY3pjbHd6eHhqbm1rb3JwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2OTQ1NDcsImV4cCI6MjA3NjI3MDU0N30.8KoGUlm_5t-GJ4gMFq2pTiun2foiCtnI8dDsbD9F4zw';
+        
+        // Initialize Supabase client
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        function showResult(message) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML += `<div class="status info">${message}</div>`;
+        }
+        
+        async function testConnection() {
+            showStatus('🔄 Testing Supabase connection...', 'info');
+            
+            try {
+                // Test basic connection
+                const { data, error } = await supabaseClient
+                    .from('reservations')
+                    .select('count')
+                    .limit(1);
+                
+                if (error) {
+                    throw error;
+                }
+                
+                showStatus('✅ Supabase connection successful!', 'success');
+                showResult(`Connection test passed. Database is accessible.`);
+                
+            } catch (error) {
+                showStatus(`❌ Connection failed: ${error.message}`, 'error');
+                showResult(`Error details: ${JSON.stringify(error, null, 2)}`);
+            }
+        }
+        
+        async function testRealtime() {
+            showStatus('🔄 Testing real-time subscription...', 'info');
+            
+            try {
+                // Subscribe to real-time changes
+                const subscription = supabaseClient
+                    .channel('test_channel')
+                    .on('postgres_changes', 
+                        { event: '*', schema: 'public', table: 'reservations' },
+                        (payload) => {
+                            showResult(`📡 Real-time event received: ${payload.eventType}`);
+                        }
+                    )
+                    .subscribe();
+                
+                showStatus('✅ Real-time subscription active!', 'success');
+                showResult('Real-time subscription is working. Try making a reservation to see events.');
+                
+                // Clean up after 10 seconds
+                setTimeout(() => {
+                    subscription.unsubscribe();
+                    showResult('Real-time subscription cleaned up.');
+                }, 10000);
+                
+            } catch (error) {
+                showStatus(`❌ Real-time test failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testInsert() {
+            showStatus('🔄 Testing database insert...', 'info');
+            
+            try {
+                const testReservation = {
+                    confirmation_id: `TEST-${Date.now()}`,
+                    guest_name: 'Test Guest',
+                    email: 'test@example.com',
+                    room_name: 'Test Room',
+                    check_in: '2024-01-01',
+                    check_out: '2024-01-02',
+                    total_amount: 100.00,
+                    status: 'pending'
+                };
+                
+                const { data, error } = await supabaseClient
+                    .from('reservations')
+                    .insert([testReservation])
+                    .select();
+                
+                if (error) {
+                    throw error;
+                }
+                
+                showStatus('✅ Database insert successful!', 'success');
+                showResult(`Test reservation created: ${JSON.stringify(data[0], null, 2)}`);
+                
+            } catch (error) {
+                showStatus(`❌ Insert test failed: ${error.message}`, 'error');
+                showResult(`Error details: ${JSON.stringify(error, null, 2)}`);
+            }
+        }
+        
+        // Auto-test connection on page load
+        window.onload = () => {
+            showStatus('🚀 Supabase Test Page Loaded', 'info');
+            showResult('Click the buttons above to test different aspects of your Supabase setup.');
+        };
+    </script>
+</body>
+</html>
