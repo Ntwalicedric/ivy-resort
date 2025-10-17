@@ -15,7 +15,7 @@ class BookingEmailService {
     return true;
   }
 
-  // Send booking confirmation email automatically
+  // Send booking confirmation email automatically (server-first strategy)
   async sendConfirmationEmail(reservation) {
     console.log('📧 Booking Email Service: Sending confirmation email...');
     console.log('📧 To:', reservation.email);
@@ -29,30 +29,27 @@ class BookingEmailService {
 
       // Generate email content
       const emailContent = buildConfirmationEmail(reservation);
-      
-      // Use EmailJS as the primary method
+
+      // Primary: Serverless function (Nodemailer on server)
       try {
-        const result = await this.sendViaEmailJS(reservation, emailContent);
-        if (result.success) {
-          console.log('✅ Email sent successfully via EmailJS');
-        } else {
-          throw new Error('EmailJS failed');
+        const serverResult = await this.sendViaServerlessFunction(reservation, emailContent);
+        if (serverResult.success) {
+          return {
+            success: true,
+            message: 'Confirmation email sent via server',
+            confirmationId: reservation.confirmationId,
+            emailId: serverResult.messageId,
+            method: serverResult.method,
+            requiresManualAction: false
+          };
         }
-      } catch (error) {
-        console.warn('❌ EmailJS failed:', error.message);
-        // Fall back to email client if EmailJS fails
-        console.log('📧 EmailJS failed, falling back to email client...');
-        return await this.sendViaEmailClient(reservation, emailContent);
+      } catch (serverError) {
+        console.warn('❌ Serverless method failed:', serverError.message);
       }
 
-      return {
-        success: true,
-        message: 'Confirmation email sent automatically to client inbox',
-        confirmationId: reservation.confirmationId,
-        emailId: `booking_${Date.now()}`,
-        method: 'automated',
-        requiresManualAction: false
-      };
+      // Fallback: Open mail client for manual send
+      console.log('📧 Falling back to email client...');
+      return await this.sendViaEmailClient(reservation, emailContent);
 
     } catch (error) {
       console.error('❌ Booking email service failed:', error);
@@ -69,8 +66,9 @@ class BookingEmailService {
     console.log('📧 Trying serverless function...');
     
     try {
-      const base = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_EMAIL_API_URL) || '/api';
-      const response = await fetch(`${base}/send-email`, {
+      // Prefer absolute API URL when provided, fallback to relative /api for Vercel
+      const baseUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_EMAIL_API_URL) || '/api';
+      const response = await fetch(`${baseUrl}/send-email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -99,47 +97,7 @@ class BookingEmailService {
     }
   }
 
-  // Method 2: Send via EmailJS
-  async sendViaEmailJS(reservation, emailContent) {
-    console.log('📧 Trying EmailJS method...');
-
-    try {
-      // EmailJS Configuration - Using hardcoded credentials
-      const serviceId = 'service_udxi846';
-      const templateId = 'template_dq18wwh';
-      const publicKey = 'EnfzHuKwjR3SE_xqv';
-
-      // Lazy import to avoid bundling if unused
-      const { default: emailjs } = await import('@emailjs/browser');
-      emailjs.init({ publicKey });
-
-      const templateParams = {
-        to_email: reservation.email,
-        guest_name: reservation.guestName,
-        confirmation_id: reservation.confirmationId,
-        room_name: reservation.roomName,
-        check_in_date: new Date(reservation.checkIn).toLocaleDateString(),
-        check_out_date: new Date(reservation.checkOut).toLocaleDateString(),
-        // Prefer currency-aware amount if available
-        total_amount: reservation.totalAmountInCurrency || reservation.totalAmount,
-        total_amount_display: reservation.totalAmountDisplay,
-        currency: reservation.currency || 'USD',
-        special_requests: reservation.specialRequests || 'None',
-        current_date: new Date().toLocaleString()
-      };
-
-      const result = await emailjs.send(serviceId, templateId, templateParams);
-
-      return {
-        success: true,
-        method: 'emailjs',
-        messageId: result?.status || `emailjs_${Date.now()}`
-      };
-    } catch (error) {
-      console.warn('❌ EmailJS method failed:', error.message);
-      throw error;
-    }
-  }
+  // Removed EmailJS method to enforce server-only email sending
 
   // Method 3: Send via webhook
   async sendViaWebhook(reservation, emailContent) {
