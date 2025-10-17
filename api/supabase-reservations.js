@@ -61,7 +61,7 @@ async function handler(req, res) {
       const { data, error } = await supabase
         .from('reservations')
         .select('*')
-        .neq('status', 'deleted') // Filter out soft-deleted records
+        .not('status', 'in', '(deleted,archived)') // Filter out soft-deleted and archived records
         .order('updated_at', { ascending: false })
         .limit(50)
 
@@ -82,7 +82,7 @@ async function handler(req, res) {
       
       // Handle different operations based on request type
       if (requestData.operation === 'update' && requestData.id) {
-        // Update operation - use delete and recreate approach to avoid constraint issues
+        // Update operation - mark old record as archived and create new one
         const { data: currentData, error: fetchError } = await supabase
           .from('reservations')
           .select('*')
@@ -100,7 +100,13 @@ async function handler(req, res) {
           })
         }
 
-        // Merge current data with update data - ensure no null values for required fields
+        // Mark old record as archived
+        await supabase
+          .from('reservations')
+          .update({ status: 'archived' })
+          .eq('id', requestData.id)
+
+        // Create new record with updated data
         const updatedData = {
           confirmation_id: currentData.confirmation_id,
           guest_name: requestData.guestName !== undefined ? requestData.guestName : currentData.guest_name,
@@ -121,25 +127,12 @@ async function handler(req, res) {
           email_sent: requestData.emailSent !== undefined ? requestData.emailSent : currentData.email_sent
         }
 
-        console.log('Current data from DB:', currentData)
-        console.log('Update data being inserted:', updatedData)
-
         // Validate that required fields are not null
         if (!updatedData.guest_name || !updatedData.email || !updatedData.room_name || !updatedData.check_in || !updatedData.check_out || !updatedData.total_amount) {
           return res.status(400).json({
             success: false,
             error: 'Required fields cannot be null: guest_name, email, room_name, check_in, check_out, total_amount'
           })
-        }
-
-        // Delete the old record
-        const { error: deleteError } = await supabase
-          .from('reservations')
-          .delete()
-          .eq('id', requestData.id)
-
-        if (deleteError) {
-          throw deleteError
         }
 
         // Insert the updated record
