@@ -61,6 +61,7 @@ async function handler(req, res) {
       const { data, error } = await supabase
         .from('reservations')
         .select('*')
+        .neq('status', 'deleted') // Filter out soft-deleted records
         .order('updated_at', { ascending: false })
         .limit(50)
 
@@ -158,18 +159,28 @@ async function handler(req, res) {
           message: 'Reservation updated successfully'
         })
       } else if (requestData.operation === 'delete' && requestData.id) {
-        // Delete operation
-        const { error } = await supabase
+        // Soft delete operation - mark as deleted instead of actually deleting
+        const { data, error } = await supabase
           .from('reservations')
-          .delete()
+          .update({ status: 'deleted' })
           .eq('id', requestData.id)
+          .select()
+          .single()
 
         if (error) {
           throw error
         }
 
+        if (!data) {
+          return res.status(404).json({
+            success: false,
+            error: 'Reservation not found'
+          })
+        }
+
         return res.status(200).json({
           success: true,
+          data: toCamelCaseReservation(data),
           message: 'Reservation deleted successfully'
         })
       } else {
