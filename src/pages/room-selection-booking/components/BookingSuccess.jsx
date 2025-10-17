@@ -7,6 +7,8 @@ import { useCurrency } from '../../../context/CurrencyContext';
 const BookingSuccess = ({ bookingData, onClose }) => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [resendResult, setResendResult] = useState(null);
   const { currency, convert } = useCurrency();
 
   useEffect(() => {
@@ -20,6 +22,57 @@ const BookingSuccess = ({ bookingData, onClose }) => {
       day: 'numeric',
       year: 'numeric'
     });
+  };
+
+  const buildReservationForEmail = () => {
+    const guestName = `${bookingData?.guestDetails?.firstName || ''} ${bookingData?.guestDetails?.lastName || ''}`.trim();
+    const totalAmountUSD = bookingData?.totalAmount || 0;
+    const isRWF = currency === 'RWF';
+    const convertedAmount = convert?.(totalAmountUSD, 'USD', currency) || totalAmountUSD;
+    const totalAmountDisplay = new Intl.NumberFormat(isRWF ? 'en-RW' : 'en-US', {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: isRWF ? 0 : 2,
+      maximumFractionDigits: isRWF ? 0 : 2,
+    })?.format(convertedAmount);
+
+    return {
+      confirmationId: bookingData?.confirmationId || bookingData?.reservationId,
+      guestName,
+      email: bookingData?.guestDetails?.email,
+      roomName: bookingData?.room?.name,
+      checkIn: bookingData?.dates?.checkIn,
+      checkOut: bookingData?.dates?.checkOut,
+      currency,
+      totalAmount: totalAmountUSD,
+      totalAmountInCurrency: convertedAmount,
+      totalAmountDisplay,
+      specialRequests: bookingData?.guestDetails?.specialRequests || ''
+    };
+  };
+
+  const handleResendEmail = async () => {
+    if (isResending) return;
+    setIsResending(true);
+    setResendResult(null);
+    try {
+      const reservation = buildReservationForEmail();
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reservation })
+      });
+      const result = await response.json();
+      if (response.ok && result?.success) {
+        setResendResult({ success: true, message: 'Confirmation email has been resent successfully.' });
+      } else {
+        setResendResult({ success: false, message: result?.error || 'Failed to resend confirmation email.' });
+      }
+    } catch (error) {
+      setResendResult({ success: false, message: error?.message || 'Failed to resend confirmation email.' });
+    } finally {
+      setIsResending(false);
+    }
   };
 
   const formatAmountByCurrency = (amountUSD) => {
@@ -94,7 +147,7 @@ Thank you for choosing Ivy Resort!
         </div>
 
         <div className="p-8 space-y-6">
-          {/* Email Confirmation Notice */}
+          {/* Email Confirmation Notice */
           {bookingData?.emailResult && (
             <div className={`rounded-xl p-4 border ${
               bookingData?.emailResult?.success 
@@ -124,6 +177,32 @@ Thank you for choosing Ivy Resort!
               </div>
             </div>
           )}
+
+          {/* Resend block */}
+          <div className="rounded-xl p-4 border bg-background">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Icon name="Mail" size={18} className="text-accent" />
+                <span className="text-sm text-muted-foreground">Didn’t receive the email?</span>
+              </div>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={handleResendEmail}
+                disabled={isResending}
+                iconName={isResending ? 'Loader2' : 'Send'}
+                iconPosition="left"
+                className="bg-accent hover:bg-accent/90"
+              >
+                {isResending ? 'Resending…' : 'Resend Confirmation Email'}
+              </Button>
+            </div>
+            {resendResult && (
+              <div className={`mt-3 text-sm ${resendResult.success ? 'text-green-700' : 'text-red-700'}`}>
+                {resendResult.message}
+              </div>
+            )}
+          </div>
 
           {/* Reservation Details */}
           <div className="bg-accent/5 rounded-xl p-6 border border-accent/20">
