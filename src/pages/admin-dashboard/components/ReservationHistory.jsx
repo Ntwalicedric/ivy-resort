@@ -29,10 +29,24 @@ const ReservationHistory = ({ onClose }) => {
   const loadHistory = async () => {
     setLoading(true);
     try {
-      const data = await sharedDatabase.getReservationHistory();
-      setReservations(data);
+      // Temporary workaround: use debug parameter until /history endpoint is deployed
+      const response = await fetch('/api/supabase-reservations?showAll=true');
+      const result = await response.json();
+      
+      if (result.success) {
+        // Filter to only show hidden reservations (cancelled, deleted, checked-out)
+        const hiddenReservations = result.data.filter(reservation => 
+          !reservation.visibleInDashboard || 
+          ['cancelled', 'deleted', 'checked-out'].includes(reservation.status)
+        );
+        setReservations(hiddenReservations);
+      } else {
+        console.error('Failed to load reservation history:', result.error);
+        setReservations([]);
+      }
     } catch (error) {
       console.error('Failed to load reservation history:', error);
+      setReservations([]);
     } finally {
       setLoading(false);
     }
