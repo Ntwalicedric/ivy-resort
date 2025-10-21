@@ -64,6 +64,22 @@ export const checkCacheValidity = () => {
 
 // Auto-invalidate cache on version change (only when actually needed)
 export const autoInvalidateCache = () => {
+  // Force cache invalidation for credentials security fix
+  const credentialsFixVersion = '20241220-credentials-security';
+  const lastCredentialsFix = localStorage.getItem('ivy_resort_credentials_fix');
+  
+  if (lastCredentialsFix !== credentialsFixVersion) {
+    console.log('Credentials security fix detected, forcing cache refresh...');
+    localStorage.setItem('ivy_resort_credentials_fix', credentialsFixVersion);
+    localStorage.setItem('ivy_resort_cache_version', credentialsFixVersion);
+    
+    // Force immediate cache invalidation
+    setTimeout(() => {
+      invalidateAllCaches();
+    }, 500);
+    return;
+  }
+  
   // Only check once per session to prevent constant refreshing
   const sessionKey = 'ivy_resort_cache_checked';
   if (sessionStorage.getItem(sessionKey)) {
