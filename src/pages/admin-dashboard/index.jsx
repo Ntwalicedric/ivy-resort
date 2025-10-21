@@ -684,7 +684,7 @@ const AdminDashboard = () => {
           />
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 mb-6 lg:mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 lg:mb-8">
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl lg:rounded-3xl shadow-xl border border-white/30 p-4 sm:p-6 lg:p-8 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="text-center">
                 <div className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-1 sm:mb-2">
@@ -725,12 +725,16 @@ const AdminDashboard = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl lg:rounded-3xl shadow-xl border border-white/30 p-4 sm:p-6 lg:p-8 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 col-span-1 sm:col-span-2 lg:col-span-1">
+          </div>
+
+          {/* Total Revenue Card - Centered Below */}
+          <div className="flex justify-center mb-6 lg:mb-8">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl lg:rounded-3xl shadow-xl border border-white/30 p-6 sm:p-8 lg:p-10 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 w-full max-w-md">
               <div className="text-center">
-                <div className="text-lg sm:text-2xl lg:text-4xl font-bold bg-gradient-to-r from-purple-600 to-purple-500 bg-clip-text text-transparent mb-1 sm:mb-2 break-words">
+                <div className="text-2xl sm:text-3xl lg:text-5xl font-bold bg-gradient-to-r from-purple-600 to-purple-500 bg-clip-text text-transparent mb-2 sm:mb-3">
                   {formatRWF(filteredReservations.reduce((sum, r) => sum + (r.totalAmount || 0), 0))}
                 </div>
-                <div className="text-sm sm:text-base text-slate-600 font-medium">
+                <div className="text-base sm:text-lg text-slate-600 font-medium">
                   Total Revenue
                 </div>
               </div>
