@@ -111,11 +111,23 @@ const ReservationHistory = ({ onClose }) => {
   };
 
   const formatCurrency = (amount, currency = 'USD') => {
+    // Ensure amount is a number
+    const numericAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+    
+    if (isNaN(numericAmount)) {
+      return `${currency} 0`;
+    }
+
+    // Special handling for RWF to show proper formatting
+    if (currency === 'RWF') {
+      return `RWF ${numericAmount.toLocaleString('en-US')}`;
+    }
+
     // Use the original currency without conversion
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: currency
-    }).format(amount);
+    }).format(numericAmount);
   };
 
   // Calculate days remaining until automatic deletion (7 days from updated_at)
