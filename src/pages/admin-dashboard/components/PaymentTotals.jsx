@@ -108,7 +108,7 @@ const PaymentTotals = ({ onClose }) => {
                     <div>
                       <p className="text-green-100 text-sm font-medium">Total Revenue</p>
                       <p className="text-3xl font-bold">
-                        {formatCurrency(getTotalRevenue(), getPrimaryCurrency())}
+                        {getTotalRevenue() > 0 ? formatCurrency(getTotalRevenue(), getPrimaryCurrency()) : 'RWF 0'}
                       </p>
                     </div>
                     <DollarSign className="w-8 h-8 text-green-200" />
@@ -148,7 +148,7 @@ const PaymentTotals = ({ onClose }) => {
                           <span className="font-medium text-gray-900">{currency}</span>
                         </div>
                         <span className="text-lg font-semibold text-gray-900">
-                          {formatCurrency(amount, currency)}
+                          {amount > 0 ? formatCurrency(amount, currency) : 'RWF 0'}
                         </span>
                       </div>
                     ))}
@@ -180,7 +180,7 @@ const PaymentTotals = ({ onClose }) => {
                           </div>
                           <div className="text-right">
                             <div className="text-lg font-semibold text-gray-900">
-                              {formatCurrency(reservation.totalAmount, reservation.currency)}
+                              {reservation.totalAmount > 0 ? formatCurrency(reservation.totalAmount, reservation.currency) : 'RWF 0'}
                             </div>
                             <div className="text-sm text-gray-500">
                               {reservation.guestCount} guest(s)
