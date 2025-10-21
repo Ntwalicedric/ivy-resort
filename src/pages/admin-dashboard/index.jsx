@@ -88,8 +88,7 @@ import {
   LogIn,
   AlertCircle,
   BarChart3,
-  History,
-  DollarSign
+  History
 } from 'lucide-react';
 import EnhancedFilterPanel from './components/EnhancedFilterPanel';
 import EnhancedReservationTable from './components/EnhancedReservationTable';
@@ -98,7 +97,6 @@ import ReservationViewModal from './components/ReservationViewModal';
 import ReservationModifyModal from './components/ReservationModifyModal';
 import ReportGenerator from './components/ReportGenerator';
 import ReservationHistory from './components/ReservationHistory';
-import PaymentTotals from './components/PaymentTotals';
 
 const AdminDashboard = () => {
   console.log('AdminDashboard: Component starting to render');
@@ -173,7 +171,6 @@ const AdminDashboard = () => {
   const [showCredentialsManager, setShowCredentialsManager] = useState(false);
   const [showReportGenerator, setShowReportGenerator] = useState(false);
   const [showReservationHistory, setShowReservationHistory] = useState(false);
-  const [showPaymentTotals, setShowPaymentTotals] = useState(false);
 
   // Show notification
   const showNotification = (message, type = 'success') => {
@@ -640,13 +637,6 @@ const AdminDashboard = () => {
                     <span className="font-semibold hidden sm:inline">History</span>
                   </button>
                   <button
-                    onClick={() => setShowPaymentTotals(true)}
-                    className="bg-gradient-to-r from-green-600 to-green-700 text-white px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl hover:from-green-700 hover:to-green-800 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-xs sm:text-sm"
-                  >
-                    <DollarSign size={16} />
-                    <span className="font-semibold hidden sm:inline">Totals</span>
-                  </button>
-                  <button
                     onClick={() => setShowCredentialsManager(true)}
                     className="bg-gradient-to-r from-slate-600 to-slate-700 text-white px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl hover:from-slate-700 hover:to-slate-800 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-xs sm:text-sm"
                   >
@@ -796,10 +786,6 @@ const AdminDashboard = () => {
             <ReservationHistory onClose={() => setShowReservationHistory(false)} />
           )}
 
-          {/* Payment Totals Modal */}
-          {showPaymentTotals && (
-            <PaymentTotals onClose={() => setShowPaymentTotals(false)} />
-          )}
         </div>
       </div>
     </ProtectedRoute>
