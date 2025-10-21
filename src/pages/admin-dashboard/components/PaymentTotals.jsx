@@ -34,26 +34,10 @@ const PaymentTotals = ({ onClose }) => {
   }, []);
 
   const formatCurrency = (amount, currency = 'USD') => {
-    // Convert to RWF for consistent display
-    const rwfAmount = convertToRWF(amount, currency);
-    return new Intl.NumberFormat('en-RW', {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'RWF'
-    }).format(rwfAmount);
-  };
-
-  // Convert any currency to RWF
-  const convertToRWF = (amount, fromCurrency) => {
-    // Simple conversion rates (you can update these with real-time rates)
-    const rates = {
-      'USD': 1300,  // 1 USD = 1300 RWF
-      'EUR': 1400,  // 1 EUR = 1400 RWF
-      'GBP': 1600,  // 1 GBP = 1600 RWF
-      'RWF': 1      // 1 RWF = 1 RWF
-    };
-    
-    const rate = rates[fromCurrency] || 1;
-    return amount * rate;
+      currency: currency
+    }).format(amount);
   };
 
   const formatDate = (dateString) => {

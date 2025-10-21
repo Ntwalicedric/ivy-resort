@@ -647,14 +647,6 @@ const AdminDashboard = () => {
                     <span className="font-semibold hidden sm:inline">Totals</span>
                   </button>
                   <button
-                    onClick={handleCleanupOldReservations}
-                    className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl hover:from-orange-600 hover:to-orange-700 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-xs sm:text-sm"
-                    title="Delete reservations older than 7 days from history"
-                  >
-                    <span className="text-sm">🧹</span>
-                    <span className="font-semibold hidden sm:inline">Cleanup</span>
-                  </button>
-                  <button
                     onClick={() => setShowCredentialsManager(true)}
                     className="bg-gradient-to-r from-slate-600 to-slate-700 text-white px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl hover:from-slate-700 hover:to-slate-800 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-xs sm:text-sm"
                   >
