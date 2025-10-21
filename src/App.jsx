@@ -59,16 +59,16 @@ function App() {
         alignItems: 'center', 
         justifyContent: 'center', 
         height: '100vh', 
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
-        color: 'white', 
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        background: 'linear-gradient(135deg, #F7F6F2 0%, #E8E5D8 100%)', 
+        color: '#1F2937', 
+        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
         textAlign: 'center',
         padding: '20px'
       }}>
         <div>
-          <h1 style={{ margin: '0 0 20px', fontSize: '2rem', fontWeight: '600' }}>Ivy Resort</h1>
-          <p style={{ margin: '0 0 20px', opacity: 0.8 }}>Your browser is not supported.</p>
-          <p style={{ margin: '0', fontSize: '0.9rem', opacity: 0.6 }}>
+          <h1 style={{ margin: '0 0 20px', fontSize: '2.5rem', fontWeight: '600', color: '#1D4ED8', fontFamily: "'Playfair Display', serif" }}>Ivy Resort</h1>
+          <p style={{ margin: '0 0 20px', opacity: 0.7, color: '#4B5563' }}>Your browser is not supported.</p>
+          <p style={{ margin: '0', fontSize: '0.9rem', opacity: 0.6, color: '#6B7280' }}>
             Please use a modern browser like Chrome, Firefox, Safari, or Edge.
           </p>
         </div>
@@ -83,23 +83,23 @@ function App() {
         alignItems: 'center', 
         justifyContent: 'center', 
         height: '100vh', 
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
-        color: 'white', 
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        background: 'linear-gradient(135deg, #F7F6F2 0%, #E8E5D8 100%)', 
+        color: '#1F2937', 
+        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
         textAlign: 'center'
       }}>
         <div>
           <div style={{ 
-            width: '50px', 
-            height: '50px', 
-            border: '3px solid rgba(255,255,255,0.3)', 
-            borderTop: '3px solid white', 
+            width: '60px', 
+            height: '60px', 
+            border: '3px solid rgba(255, 215, 0, 0.2)', 
+            borderTop: '3px solid #FFD700', 
             borderRadius: '50%', 
             animation: 'spin 1s linear infinite', 
-            margin: '0 auto 20px' 
+            margin: '0 auto 24px' 
           }}></div>
-          <h1 style={{ margin: '0', fontSize: '2rem', fontWeight: '600' }}>Ivy Resort</h1>
-          <p style={{ margin: '10px 0 0', opacity: 0.8 }}>Loading your luxury experience...</p>
+          <h1 style={{ margin: '0', fontSize: '2.5rem', fontWeight: '600', color: '#1D4ED8', fontFamily: "'Playfair Display', serif" }}>Ivy Resort</h1>
+          <p style={{ margin: '12px 0 0', opacity: 0.7, fontSize: '1.1rem', color: '#4B5563' }}>Loading your luxury experience...</p>
         </div>
       </div>
     );
