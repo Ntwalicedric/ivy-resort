@@ -16,6 +16,7 @@ import {
   Filter
 } from 'lucide-react';
 import sharedDatabase from '../../../services/sharedDatabase';
+import useRWFConversion from '../../../hooks/useRWFConversion';
 
 const ReservationHistory = ({ onClose }) => {
   const [reservations, setReservations] = useState([]);
@@ -24,6 +25,7 @@ const ReservationHistory = ({ onClose }) => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('updatedAt');
   const [sortOrder, setSortOrder] = useState('desc');
+  const { formatRWF } = useRWFConversion();
 
   // Load reservation history
   const loadHistory = async () => {
@@ -111,23 +113,8 @@ const ReservationHistory = ({ onClose }) => {
   };
 
   const formatCurrency = (amount, currency = 'USD') => {
-    // Ensure amount is a number
-    const numericAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-    
-    if (isNaN(numericAmount)) {
-      return `${currency} 0`;
-    }
-
-    // Special handling for RWF to show proper formatting
-    if (currency === 'RWF') {
-      return `RWF ${numericAmount.toLocaleString('en-US')}`;
-    }
-
-    // Use the original currency without conversion
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency
-    }).format(numericAmount);
+    // Use the same currency formatting as the main dashboard
+    return formatRWF(amount);
   };
 
   // Calculate days remaining until automatic deletion (7 days from updated_at)

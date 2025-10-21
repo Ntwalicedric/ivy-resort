@@ -10,11 +10,13 @@ import {
   XCircle
 } from 'lucide-react';
 import sharedDatabase from '../../../services/sharedDatabase';
+import useRWFConversion from '../../../hooks/useRWFConversion';
 
 const PaymentTotals = ({ onClose }) => {
   const [totals, setTotals] = useState({ totals: {}, count: 0, reservations: [] });
   const [loading, setLoading] = useState(true);
   const [showDetails, setShowDetails] = useState(false);
+  const { formatRWF } = useRWFConversion();
 
   // Load payment totals
   const loadTotals = async () => {
@@ -34,10 +36,8 @@ const PaymentTotals = ({ onClose }) => {
   }, []);
 
   const formatCurrency = (amount, currency = 'USD') => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency
-    }).format(amount);
+    // Use the same currency formatting as the main dashboard
+    return formatRWF(amount);
   };
 
   const formatDate = (dateString) => {

@@ -717,6 +717,16 @@ const AdminDashboard = () => {
             </div>
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl lg:rounded-3xl shadow-xl border border-white/30 p-4 sm:p-6 lg:p-8 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               <div className="text-center">
+                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent mb-1 sm:mb-2">
+                  {filteredReservations.reduce((sum, r) => sum + (r.guestCount || 1), 0)}
+                </div>
+                <div className="text-sm sm:text-base text-slate-600 font-medium">
+                  Total Guests
+                </div>
+              </div>
+            </div>
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl lg:rounded-3xl shadow-xl border border-white/30 p-4 sm:p-6 lg:p-8 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+              <div className="text-center">
                 <div className="text-lg sm:text-2xl lg:text-4xl font-bold bg-gradient-to-r from-purple-600 to-purple-500 bg-clip-text text-transparent mb-1 sm:mb-2 break-words">
                   {formatRWF(filteredReservations.reduce((sum, r) => sum + (r.totalAmount || 0), 0))}
                 </div>
