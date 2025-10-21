@@ -59,74 +59,158 @@ async function handler(req, res) {
 
     // Simple GET handler - only show visible reservations by default
     if (method === 'GET' && path === '/api/supabase-reservations') {
-      const { data, error } = await supabase
-        .from('reservations')
-        .select('*')
-        .eq('visible_in_dashboard', true) // Only show visible reservations
-        .order('updated_at', { ascending: false })
-        .limit(50)
+      try {
+        const { data, error } = await supabase
+          .from('reservations')
+          .select('*')
+          .eq('visible_in_dashboard', true) // Only show visible reservations
+          .order('updated_at', { ascending: false })
+          .limit(50)
 
-      if (error) {
+        if (error) {
+          // Fallback: if visible_in_dashboard column doesn't exist, filter by status
+          if (error.message.includes('visible_in_dashboard')) {
+            console.log('visible_in_dashboard column not found, using status filter fallback');
+            const { data: fallbackData, error: fallbackError } = await supabase
+              .from('reservations')
+              .select('*')
+              .not('status', 'in', '(cancelled,deleted,checked-out)') // Exclude hidden statuses
+              .order('updated_at', { ascending: false })
+              .limit(50)
+
+            if (fallbackError) {
+              throw fallbackError
+            }
+
+            return res.status(200).json({
+              success: true,
+              data: (fallbackData || []).map(toCamelCaseReservation),
+              count: fallbackData?.length || 0
+            })
+          }
+          throw error
+        }
+
+        return res.status(200).json({
+          success: true,
+          data: (data || []).map(toCamelCaseReservation),
+          count: data?.length || 0
+        })
+      } catch (error) {
         throw error
       }
-
-      return res.status(200).json({
-        success: true,
-        data: (data || []).map(toCamelCaseReservation),
-        count: data?.length || 0
-      })
     }
 
     // GET handler for history view - show all reservations including hidden ones
     if (method === 'GET' && path === '/api/supabase-reservations/history') {
-      const { data, error } = await supabase
-        .from('reservations')
-        .select('*')
-        .eq('visible_in_dashboard', false) // Only show hidden reservations
-        .order('updated_at', { ascending: false })
-        .limit(100)
+      try {
+        const { data, error } = await supabase
+          .from('reservations')
+          .select('*')
+          .eq('visible_in_dashboard', false) // Only show hidden reservations
+          .order('updated_at', { ascending: false })
+          .limit(100)
 
-      if (error) {
+        if (error) {
+          // Fallback: if visible_in_dashboard column doesn't exist, filter by status
+          if (error.message.includes('visible_in_dashboard')) {
+            console.log('visible_in_dashboard column not found, using status filter fallback for history');
+            const { data: fallbackData, error: fallbackError } = await supabase
+              .from('reservations')
+              .select('*')
+              .in('status', ['cancelled', 'deleted', 'checked-out']) // Only hidden statuses
+              .order('updated_at', { ascending: false })
+              .limit(100)
+
+            if (fallbackError) {
+              throw fallbackError
+            }
+
+            return res.status(200).json({
+              success: true,
+              data: (fallbackData || []).map(toCamelCaseReservation),
+              count: fallbackData?.length || 0
+            })
+          }
+          throw error
+        }
+
+        return res.status(200).json({
+          success: true,
+          data: (data || []).map(toCamelCaseReservation),
+          count: data?.length || 0
+        })
+      } catch (error) {
         throw error
       }
-
-      return res.status(200).json({
-        success: true,
-        data: (data || []).map(toCamelCaseReservation),
-        count: data?.length || 0
-      })
     }
 
     // GET handler for payment totals - only include visible reservations
     if (method === 'GET' && path === '/api/supabase-reservations/totals') {
-      const { data, error } = await supabase
-        .from('reservations')
-        .select('total_amount, currency, status')
-        .eq('visible_in_dashboard', true) // Only include visible reservations
-        .in('status', ['confirmed', 'checked-in']) // Only active reservations
+      try {
+        const { data, error } = await supabase
+          .from('reservations')
+          .select('total_amount, currency, status')
+          .eq('visible_in_dashboard', true) // Only include visible reservations
+          .in('status', ['confirmed', 'checked-in']) // Only active reservations
 
-      if (error) {
+        if (error) {
+          // Fallback: if visible_in_dashboard column doesn't exist, filter by status
+          if (error.message.includes('visible_in_dashboard')) {
+            console.log('visible_in_dashboard column not found, using status filter fallback for totals');
+            const { data: fallbackData, error: fallbackError } = await supabase
+              .from('reservations')
+              .select('total_amount, currency, status')
+              .in('status', ['confirmed', 'checked-in']) // Only active reservations
+              .not('status', 'in', '(cancelled,deleted,checked-out)') // Exclude hidden statuses
+
+            if (fallbackError) {
+              throw fallbackError
+            }
+
+            // Calculate totals by currency
+            const totals = {}
+            fallbackData?.forEach(reservation => {
+              const currency = reservation.currency || 'USD'
+              if (!totals[currency]) {
+                totals[currency] = 0
+              }
+              totals[currency] += parseFloat(reservation.total_amount) || 0
+            })
+
+            return res.status(200).json({
+              success: true,
+              data: {
+                totals,
+                count: fallbackData?.length || 0,
+                reservations: fallbackData?.map(toCamelCaseReservation) || []
+              }
+            })
+          }
+          throw error
+        }
+
+        // Calculate totals by currency
+        const totals = {}
+        data?.forEach(reservation => {
+          const currency = reservation.currency || 'USD'
+          if (!totals[currency]) {
+            totals[currency] = 0
+          }
+          totals[currency] += parseFloat(reservation.total_amount) || 0
+        })
+
+        return res.status(200).json({
+          success: true,
+          data: {
+            totals,
+            count: data?.length || 0,
+            reservations: data?.map(toCamelCaseReservation) || []
+          }
+        })
+      } catch (error) {
         throw error
       }
-
-      // Calculate totals by currency
-      const totals = {}
-      data?.forEach(reservation => {
-        const currency = reservation.currency || 'USD'
-        if (!totals[currency]) {
-          totals[currency] = 0
-        }
-        totals[currency] += parseFloat(reservation.total_amount) || 0
-      })
-
-      return res.status(200).json({
-        success: true,
-        data: {
-          totals,
-          count: data?.length || 0,
-          reservations: data?.map(toCamelCaseReservation) || []
-        }
-      })
     }
 
     // POST handler for create, update, and delete operations
