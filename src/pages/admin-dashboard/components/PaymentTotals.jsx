@@ -23,6 +23,7 @@ const PaymentTotals = ({ onClose }) => {
     setLoading(true);
     try {
       const data = await sharedDatabase.getPaymentTotals();
+      console.log('PaymentTotals: Loaded data', data);
       setTotals(data);
     } catch (error) {
       console.error('Failed to load payment totals:', error);
@@ -37,7 +38,10 @@ const PaymentTotals = ({ onClose }) => {
 
   const formatCurrency = (amount, currency = 'USD') => {
     // Use the same currency formatting as the main dashboard
-    return formatRWF(amount);
+    console.log('PaymentTotals: formatCurrency()', { amount, currency });
+    const formatted = formatRWF(amount);
+    console.log('PaymentTotals: formatted result', formatted);
+    return formatted;
   };
 
   const formatDate = (dateString) => {
@@ -49,7 +53,9 @@ const PaymentTotals = ({ onClose }) => {
   };
 
   const getTotalRevenue = () => {
-    return Object.values(totals.totals || {}).reduce((sum, amount) => sum + amount, 0);
+    const total = Object.values(totals.totals || {}).reduce((sum, amount) => sum + amount, 0);
+    console.log('PaymentTotals: getTotalRevenue()', { totals: totals.totals, total });
+    return total;
   };
 
   const getPrimaryCurrency = () => {
