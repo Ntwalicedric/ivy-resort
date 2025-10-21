@@ -60,6 +60,28 @@ async function handler(req, res) {
     // Simple GET handler - only show visible reservations by default
     if (method === 'GET' && path === '/api/supabase-reservations') {
       try {
+        // Check for debug parameter to show all reservations
+        const url = new URL(req.url, `http://${req.headers.host}`);
+        const showAll = url.searchParams.get('showAll') === 'true';
+        
+        if (showAll) {
+          // Debug mode: show all reservations
+          const { data, error } = await supabase
+            .from('reservations')
+            .select('*')
+            .order('updated_at', { ascending: false })
+            .limit(100)
+          
+          if (error) throw error
+          
+          return res.status(200).json({
+            success: true,
+            data: (data || []).map(toCamelCaseReservation),
+            count: data?.length || 0,
+            debug: 'Showing all reservations'
+          })
+        }
+        
         const { data, error } = await supabase
           .from('reservations')
           .select('*')
