@@ -245,13 +245,15 @@ async function handler(req, res) {
             console.log('visible_in_dashboard column not found, using status filter fallback for totals');
             const { data: fallbackData, error: fallbackError } = await supabase
               .from('reservations')
-              .select('total_amount, currency, status')
+              .select('total_amount, currency, status, id, guest_name, room_name, check_in, check_out, guest_count')
               .in('status', ['confirmed', 'checked-in']) // Only active reservations
-              .not('status', 'in', '("cancelled","deleted","checked-out")') // Exclude hidden statuses
 
             if (fallbackError) {
               throw fallbackError
             }
+
+            console.log('Totals API Fallback: Found reservations:', fallbackData?.length || 0);
+            console.log('Totals API Fallback: Reservation data:', fallbackData);
 
             // Calculate totals by currency
             const totals = {}
@@ -262,6 +264,8 @@ async function handler(req, res) {
               }
               totals[currency] += parseFloat(reservation.total_amount) || 0
             })
+
+            console.log('Totals API Fallback: Calculated totals:', totals);
 
             return res.status(200).json({
               success: true,
@@ -275,6 +279,9 @@ async function handler(req, res) {
           throw error
         }
 
+        console.log('Totals API Main: Found reservations:', data?.length || 0);
+        console.log('Totals API Main: Reservation data:', data);
+
         // Calculate totals by currency
         const totals = {}
         data?.forEach(reservation => {
@@ -284,6 +291,8 @@ async function handler(req, res) {
           }
           totals[currency] += parseFloat(reservation.total_amount) || 0
         })
+
+        console.log('Totals API Main: Calculated totals:', totals);
 
         return res.status(200).json({
           success: true,
