@@ -111,10 +111,26 @@ const ReservationHistory = ({ onClose }) => {
   };
 
   const formatCurrency = (amount, currency = 'USD') => {
-    return new Intl.NumberFormat('en-US', {
+    // Convert to RWF for consistent display in history
+    const rwfAmount = convertToRWF(amount, currency);
+    return new Intl.NumberFormat('en-RW', {
       style: 'currency',
-      currency: currency
-    }).format(amount);
+      currency: 'RWF'
+    }).format(rwfAmount);
+  };
+
+  // Convert any currency to RWF
+  const convertToRWF = (amount, fromCurrency) => {
+    // Simple conversion rates (you can update these with real-time rates)
+    const rates = {
+      'USD': 1300,  // 1 USD = 1300 RWF
+      'EUR': 1400,  // 1 EUR = 1400 RWF
+      'GBP': 1600,  // 1 GBP = 1600 RWF
+      'RWF': 1      // 1 RWF = 1 RWF
+    };
+    
+    const rate = rates[fromCurrency] || 1;
+    return amount * rate;
   };
 
   return (
@@ -283,8 +299,15 @@ const ReservationHistory = ({ onClose }) => {
                       )}
 
                       <div className="flex items-center justify-between">
-                        <div className="text-lg font-semibold text-gray-900">
-                          {formatCurrency(reservation.totalAmount, reservation.currency)}
+                        <div className="flex flex-col">
+                          <div className="text-lg font-semibold text-gray-900">
+                            {formatCurrency(reservation.totalAmount, reservation.currency)}
+                          </div>
+                          {reservation.currency !== 'RWF' && (
+                            <div className="text-sm text-gray-500">
+                              Original: {reservation.totalAmount} {reservation.currency}
+                            </div>
+                          )}
                         </div>
                         <div className="text-sm text-gray-500">
                           Created: {formatDate(reservation.createdAt)}
