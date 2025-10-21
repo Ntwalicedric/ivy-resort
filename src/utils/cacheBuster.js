@@ -82,35 +82,13 @@ export const autoInvalidateCache = () => {
     sessionStorage.setItem(sessionKey, 'true');
     localStorage.setItem('ivy_resort_cache_version', currentVersion);
     
-    // Show notification before invalidating
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 12px 20px;
-      text-align: center;
-      z-index: 10000;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      font-size: 14px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    `;
+    // Notification disabled per user request - silently update cache
+    console.log('Cache version updated, silently refreshing cache');
     
-    notification.innerHTML = `
-      <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-        <span>🔄 Ivy Resort has been updated! Refreshing for the latest version...</span>
-      </div>
-    `;
-    
-    document.body.appendChild(notification);
-    
-    // Invalidate cache after a short delay
+    // Invalidate cache silently without notification
     setTimeout(() => {
       invalidateAllCaches();
-    }, 2000);
+    }, 1000);
   } else {
     // Mark as checked even if no update needed
     sessionStorage.setItem(sessionKey, 'true');

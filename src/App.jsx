@@ -27,8 +27,8 @@ function App() {
     try {
       const hasUpdated = checkForUpdates();
       if (hasUpdated) {
-        console.log('App: Version updated, showing refresh notification');
-        showCacheUpdateNotification();
+        console.log('App: Version updated, but notification disabled');
+        // showCacheUpdateNotification(); // Disabled per user request
       }
       
       // Disable automatic cache invalidation to prevent constant refreshing
