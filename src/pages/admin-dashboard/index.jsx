@@ -240,24 +240,6 @@ const AdminDashboard = () => {
     navigate('/admin-login');
   };
 
-  // Handle clear all reservations
-  const handleClearAllReservations = async () => {
-    if (window.confirm('Are you sure you want to clear ALL reservations? This action cannot be undone.')) {
-      try {
-        const result = await sharedDatabase.clearAllReservations?.();
-        if (result?.success) {
-          await refreshData();
-          showNotification('All reservations cleared successfully!', 'success');
-        } else {
-          showNotification('Error clearing reservations: ' + (result?.error || 'Unknown error'), 'error');
-        }
-      } catch (error) {
-        console.error('Error clearing reservations:', error);
-        showNotification('Error clearing reservations', 'error');
-      }
-    }
-  };
-
   // Handle view reservation
   const handleView = (reservation) => {
     setSelectedReservation(reservation);
@@ -626,14 +608,6 @@ const AdminDashboard = () => {
                   >
                     <DollarSign size={16} />
                     <span className="font-semibold hidden sm:inline">Totals</span>
-                  </button>
-                  <button
-                    onClick={handleClearAllReservations}
-                    className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl hover:from-orange-600 hover:to-orange-700 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-xs sm:text-sm"
-                    title="Clear all reservations (for testing)"
-                  >
-                    <span className="text-sm">🗑️</span>
-                    <span className="font-semibold hidden sm:inline">Clear All</span>
                   </button>
                   <button
                     onClick={() => setShowCredentialsManager(true)}
