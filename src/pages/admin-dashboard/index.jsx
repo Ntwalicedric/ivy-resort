@@ -137,25 +137,7 @@ const AdminDashboard = () => {
     refreshData();
   };
 
-  // Auto-refresh functionality
-  useEffect(() => {
-    // Set up auto-refresh every 10 seconds
-    const refreshInterval = setInterval(() => {
-      console.log('Dashboard: Auto-refreshing data...');
-      setIsAutoRefreshing(true);
-      refreshData().then(() => {
-        setIsAutoRefreshing(false);
-        setLastRefreshTime(new Date());
-      }).catch(() => {
-        setIsAutoRefreshing(false);
-      });
-    }, 10000); // 10 seconds
-
-    // Cleanup interval on component unmount
-    return () => {
-      clearInterval(refreshInterval);
-    };
-  }, [refreshData]);
+  // Auto-refresh functionality removed - users can manually refresh when needed
 
   // Local state
   const [searchTerm, setSearchTerm] = useState('');
@@ -178,8 +160,6 @@ const AdminDashboard = () => {
   const [showReportGenerator, setShowReportGenerator] = useState(false);
   const [showReservationHistory, setShowReservationHistory] = useState(false);
   const [showPaymentTotals, setShowPaymentTotals] = useState(false);
-  const [isAutoRefreshing, setIsAutoRefreshing] = useState(false);
-  const [lastRefreshTime, setLastRefreshTime] = useState(new Date());
 
   // Show notification
   const showNotification = (message, type = 'success') => {
@@ -609,41 +589,21 @@ const AdminDashboard = () => {
                 <div className="flex-1">
                   <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">Reservation Management</h1>
-                    {isAutoRefreshing && (
-                      <div className="flex items-center space-x-2 text-blue-600">
-                        <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-blue-600"></div>
-                        <span className="text-xs sm:text-sm font-medium">Refreshing...</span>
-                      </div>
-                    )}
                   </div>
                   <p className="text-slate-600 mt-2 sm:mt-3 text-sm sm:text-base lg:text-lg">Manage client reservations and bookings with ease</p>
-                  <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4 mt-2">
-                    <p className="text-xs sm:text-sm text-slate-500">
-                      Last updated: {lastRefreshTime.toLocaleTimeString()}
-                    </p>
-                    <div className="flex items-center space-x-1 text-xs text-slate-400">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                      <span>Auto-refresh every 10s</span>
-                    </div>
-                  </div>
                 </div>
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   <button
                     onClick={() => {
-                      setIsAutoRefreshing(true);
                       refreshData().then(() => {
-                        setIsAutoRefreshing(false);
-                        setLastRefreshTime(new Date());
                         showNotification('Data refreshed successfully!', 'success');
                       }).catch(() => {
-                        setIsAutoRefreshing(false);
                         showNotification('Failed to refresh data', 'error');
                       });
                     }}
-                    disabled={isAutoRefreshing}
-                    className="bg-gradient-to-r from-green-600 to-green-700 text-white px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl hover:from-green-700 hover:to-green-800 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm"
+                    className="bg-gradient-to-r from-green-600 to-green-700 text-white px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl hover:from-green-700 hover:to-green-800 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-xs sm:text-sm"
                   >
-                    <RefreshCw size={16} className={isAutoRefreshing ? 'animate-spin' : ''} />
+                    <RefreshCw size={16} />
                     <span className="font-semibold hidden sm:inline">Refresh</span>
                   </button>
                   <button
