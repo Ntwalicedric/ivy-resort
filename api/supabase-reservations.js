@@ -167,6 +167,69 @@ async function handler(req, res) {
       }
     }
 
+    // GET handler for cleanup - delete old hidden reservations (older than 7 days)
+    if (method === 'GET' && path === '/api/supabase-reservations/cleanup') {
+      try {
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        
+        console.log('Cleanup: Deleting reservations older than', sevenDaysAgo.toISOString());
+        
+        // Delete reservations that are hidden and older than 7 days
+        const { data: deletedData, error: deleteError } = await supabase
+          .from('reservations')
+          .delete()
+          .eq('visible_in_dashboard', false)
+          .lt('updated_at', sevenDaysAgo.toISOString())
+          .select()
+
+        if (deleteError) {
+          // Fallback: if visible_in_dashboard column doesn't exist, use status filter
+          if (deleteError.message.includes('visible_in_dashboard')) {
+            console.log('Cleanup: Using status filter fallback');
+            const { data: fallbackDeletedData, error: fallbackDeleteError } = await supabase
+              .from('reservations')
+              .delete()
+              .in('status', ['cancelled', 'deleted', 'checked-out'])
+              .lt('updated_at', sevenDaysAgo.toISOString())
+              .select()
+
+            if (fallbackDeleteError) {
+              throw fallbackDeleteError
+            }
+
+            return res.status(200).json({
+              success: true,
+              data: {
+                deletedCount: fallbackDeletedData?.length || 0,
+                deletedReservations: fallbackDeletedData || [],
+                cutoffDate: sevenDaysAgo.toISOString()
+              },
+              message: `Cleaned up ${fallbackDeletedData?.length || 0} old hidden reservations`
+            })
+          }
+          throw deleteError
+        }
+
+        return res.status(200).json({
+          success: true,
+          data: {
+            deletedCount: deletedData?.length || 0,
+            deletedReservations: deletedData || [],
+            cutoffDate: sevenDaysAgo.toISOString()
+          },
+          message: `Cleaned up ${deletedData?.length || 0} old hidden reservations`
+        })
+      } catch (error) {
+        console.error('Cleanup error:', error)
+        return res.status(500).json({
+          success: false,
+          error: 'Failed to cleanup old reservations',
+          details: error.message
+        })
+      }
+    }
+
     // GET handler for payment totals - only include visible reservations
     if (method === 'GET' && path === '/api/supabase-reservations/totals') {
       try {

@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useDatabase } from '../../context/DatabaseContext';
 import { ProtectedRoute, useAuth } from '../../components/ui/AuthenticationGuard';
 import useRWFConversion from '../../hooks/useRWFConversion';
+import sharedDatabase from '../../services/sharedDatabase';
+import autoCleanupService from '../../utils/autoCleanup';
 
 // Elegant notification styles
 const notificationStyles = `
@@ -139,6 +141,18 @@ const AdminDashboard = () => {
 
   // Auto-refresh functionality removed - users can manually refresh when needed
 
+  // Initialize auto cleanup service
+  useEffect(() => {
+    console.log('AdminDashboard: Starting auto cleanup service...');
+    autoCleanupService.startAutoCleanup();
+    
+    // Cleanup on component unmount
+    return () => {
+      console.log('AdminDashboard: Stopping auto cleanup service...');
+      autoCleanupService.stopAutoCleanup();
+    };
+  }, []);
+
   // Local state
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -226,6 +240,29 @@ const AdminDashboard = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedReservations = filteredReservations.slice(startIndex, endIndex);
+
+  // Handle cleanup of old reservations
+  const handleCleanupOldReservations = async () => {
+    if (window.confirm('Are you sure you want to delete all reservations older than 7 days from the history? This action cannot be undone.')) {
+      try {
+        setIsSubmitting(true);
+        const result = await sharedDatabase.cleanupOldReservations();
+        
+        if (result.deletedCount > 0) {
+          showNotification(`Successfully deleted ${result.deletedCount} old reservations from history!`, 'success');
+          // Refresh data to update the dashboard
+          await refreshData();
+        } else {
+          showNotification('No old reservations found to delete.', 'info');
+        }
+      } catch (error) {
+        console.error('Error cleaning up old reservations:', error);
+        showNotification('Failed to cleanup old reservations', 'error');
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
+  };
 
   // Handle logout
   const handleLogout = () => {
@@ -608,6 +645,14 @@ const AdminDashboard = () => {
                   >
                     <DollarSign size={16} />
                     <span className="font-semibold hidden sm:inline">Totals</span>
+                  </button>
+                  <button
+                    onClick={handleCleanupOldReservations}
+                    className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl hover:from-orange-600 hover:to-orange-700 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-xs sm:text-sm"
+                    title="Delete reservations older than 7 days from history"
+                  >
+                    <span className="text-sm">🧹</span>
+                    <span className="font-semibold hidden sm:inline">Cleanup</span>
                   </button>
                   <button
                     onClick={() => setShowCredentialsManager(true)}

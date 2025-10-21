@@ -132,6 +132,17 @@ class SharedDatabaseService {
     }
   }
 
+  async cleanupOldReservations() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/cleanup`);
+      const result = await this.parseResponse(response);
+      return result.success ? result.data : { deletedCount: 0, deletedReservations: [] };
+    } catch (error) {
+      console.warn('Shared Database Service: Failed to cleanup old reservations:', error);
+      return { deletedCount: 0, deletedReservations: [] };
+    }
+  }
+
   async getPaymentTotals() {
     try {
       const response = await fetch(`${API_BASE_URL}/totals`);
