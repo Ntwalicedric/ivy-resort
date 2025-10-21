@@ -13,8 +13,7 @@ import {
   AlertCircle,
   RefreshCw,
   Search,
-  Filter,
-  Trash2
+  Filter
 } from 'lucide-react';
 import sharedDatabase from '../../../services/sharedDatabase';
 
@@ -25,7 +24,6 @@ const ReservationHistory = ({ onClose }) => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('updatedAt');
   const [sortOrder, setSortOrder] = useState('desc');
-  const [isCleaningUp, setIsCleaningUp] = useState(false);
 
   // Load reservation history
   const loadHistory = async () => {
@@ -51,29 +49,6 @@ const ReservationHistory = ({ onClose }) => {
       setReservations([]);
     } finally {
       setLoading(false);
-    }
-  };
-
-  // Handle cleanup of old reservations
-  const handleCleanupOldReservations = async () => {
-    if (window.confirm('Are you sure you want to delete all reservations older than 7 days from the history? This action cannot be undone.')) {
-      try {
-        setIsCleaningUp(true);
-        const result = await sharedDatabase.cleanupOldReservations();
-        
-        if (result.deletedCount > 0) {
-          alert(`Successfully deleted ${result.deletedCount} old reservations from history!`);
-          // Reload history to update the display
-          await loadHistory();
-        } else {
-          alert('No old reservations found to delete.');
-        }
-      } catch (error) {
-        console.error('Error cleaning up old reservations:', error);
-        alert('Failed to cleanup old reservations');
-      } finally {
-        setIsCleaningUp(false);
-      }
     }
   };
 
@@ -136,10 +111,20 @@ const ReservationHistory = ({ onClose }) => {
   };
 
   const formatCurrency = (amount, currency = 'USD') => {
+    // Use the original currency without conversion
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: currency
     }).format(amount);
+  };
+
+  // Calculate days remaining until automatic deletion (7 days from updated_at)
+  const getDaysUntilDeletion = (updatedAt) => {
+    const updatedDate = new Date(updatedAt);
+    const deletionDate = new Date(updatedDate.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7 days
+    const now = new Date();
+    const daysRemaining = Math.ceil((deletionDate - now) / (24 * 60 * 60 * 1000));
+    return Math.max(0, daysRemaining);
   };
 
   return (
@@ -154,23 +139,12 @@ const ReservationHistory = ({ onClose }) => {
               {filteredReservations.length} hidden reservations
             </span>
           </div>
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={handleCleanupOldReservations}
-              disabled={isCleaningUp}
-              className="bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
-              title="Delete reservations older than 7 days"
-            >
-              <Trash2 className="w-4 h-4" />
-              <span>{isCleaningUp ? 'Cleaning...' : 'Cleanup'}</span>
-            </button>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <XCircle className="w-6 h-6" />
-            </button>
-          </div>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <XCircle className="w-6 h-6" />
+          </button>
         </div>
 
         {/* Filters */}
@@ -319,8 +293,20 @@ const ReservationHistory = ({ onClose }) => {
                       )}
 
                       <div className="flex items-center justify-between">
-                        <div className="text-lg font-semibold text-gray-900">
-                          {formatCurrency(reservation.totalAmount, reservation.currency)}
+                        <div className="flex flex-col">
+                          <div className="text-lg font-semibold text-gray-900">
+                            {formatCurrency(reservation.totalAmount, reservation.currency)}
+                          </div>
+                          {getDaysUntilDeletion(reservation.updatedAt) > 0 && (
+                            <div className="text-xs text-gray-500 mt-1">
+                              Auto-delete in {getDaysUntilDeletion(reservation.updatedAt)} day{getDaysUntilDeletion(reservation.updatedAt) !== 1 ? 's' : ''}
+                            </div>
+                          )}
+                          {getDaysUntilDeletion(reservation.updatedAt) === 0 && (
+                            <div className="text-xs text-red-500 mt-1">
+                              Scheduled for deletion
+                            </div>
+                          )}
                         </div>
                         <div className="text-sm text-gray-500">
                           Created: {formatDate(reservation.createdAt)}
