@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useRWFConversion from '../../../hooks/useRWFConversion';
+import sharedDatabase from '../../../services/sharedDatabase';
 import { 
   X, 
   Download, 
@@ -26,6 +27,37 @@ const ReportGenerator = ({
   const [dateRange, setDateRange] = useState('month');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedReport, setGeneratedReport] = useState(null);
+  const [allReservations, setAllReservations] = useState([]);
+  const [isLoadingData, setIsLoadingData] = useState(false);
+
+  // Fetch all reservations for reporting (including hidden ones)
+  const fetchAllReservations = async () => {
+    setIsLoadingData(true);
+    try {
+      // Use the debug parameter to get all reservations
+      const response = await fetch('/api/supabase-reservations?showAll=true');
+      const result = await response.json();
+      if (result.success) {
+        setAllReservations(result.data || []);
+        console.log('ReportGenerator: Fetched all reservations:', result.data?.length || 0);
+      } else {
+        console.error('ReportGenerator: Failed to fetch all reservations:', result.error);
+        setAllReservations(reservations); // Fallback to passed reservations
+      }
+    } catch (error) {
+      console.error('ReportGenerator: Error fetching all reservations:', error);
+      setAllReservations(reservations); // Fallback to passed reservations
+    } finally {
+      setIsLoadingData(false);
+    }
+  };
+
+  // Fetch all reservations when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      fetchAllReservations();
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -34,8 +66,8 @@ const ReportGenerator = ({
     let startDate, endDate;
     
     console.log('ReportGenerator: Calculating report for dateRange:', dateRange);
-    console.log('ReportGenerator: Total reservations available:', reservations.length);
-    console.log('ReportGenerator: Sample reservation:', reservations[0]);
+    console.log('ReportGenerator: Total reservations available:', allReservations.length);
+    console.log('ReportGenerator: Sample reservation:', allReservations[0]);
     
     switch (dateRange) {
       case 'week':
@@ -62,7 +94,7 @@ const ReportGenerator = ({
 
     console.log('ReportGenerator: Date range:', { startDate: startDate.toISOString(), endDate: endDate.toISOString() });
     
-    const filteredReservations = reservations.filter(reservation => {
+    const filteredReservations = allReservations.filter(reservation => {
       const checkInDate = new Date(reservation.checkIn);
       const isInRange = checkInDate >= startDate && checkInDate <= endDate;
       console.log('ReportGenerator: Checking reservation:', {
@@ -222,7 +254,12 @@ Ivy Resort Management System
 
             {/* Content */}
             <div className="p-8 overflow-y-auto max-h-[calc(95vh-140px)]">
-              {!generatedReport ? (
+              {isLoadingData ? (
+                <div className="flex items-center justify-center h-64">
+                  <RefreshCw className="w-8 h-8 animate-spin text-blue-600" />
+                  <span className="ml-2 text-gray-600">Loading reservation data...</span>
+                </div>
+              ) : !generatedReport ? (
                 <div className="space-y-6">
                   {/* Date Range Selection */}
                   <div>
