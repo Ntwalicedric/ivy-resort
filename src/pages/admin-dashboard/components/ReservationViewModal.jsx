@@ -214,7 +214,9 @@ const ReservationViewModal = ({
                           <Users size={18} className="text-slate-500" />
                           <div>
                             <p className="text-sm text-slate-500">Number of Guests</p>
-                            <p className="font-medium text-slate-900">{reservation.guests || 'N/A'}</p>
+                            <p className="font-medium text-slate-900">
+                              {reservation.guestCount || reservation.guests || 1} guest{(reservation.guestCount || reservation.guests || 1) !== 1 ? 's' : ''}
+                            </p>
                           </div>
                         </div>
                       </div>
