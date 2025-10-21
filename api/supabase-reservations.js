@@ -74,7 +74,7 @@ async function handler(req, res) {
             const { data: fallbackData, error: fallbackError } = await supabase
               .from('reservations')
               .select('*')
-              .not('status', 'in', '(cancelled,deleted,checked-out)') // Exclude hidden statuses
+              .not('status', 'in', '("cancelled","deleted","checked-out")') // Exclude hidden statuses
               .order('updated_at', { ascending: false })
               .limit(50)
 
@@ -162,7 +162,7 @@ async function handler(req, res) {
               .from('reservations')
               .select('total_amount, currency, status')
               .in('status', ['confirmed', 'checked-in']) // Only active reservations
-              .not('status', 'in', '(cancelled,deleted,checked-out)') // Exclude hidden statuses
+              .not('status', 'in', '("cancelled","deleted","checked-out")') // Exclude hidden statuses
 
             if (fallbackError) {
               throw fallbackError
