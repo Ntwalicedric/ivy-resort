@@ -33,6 +33,10 @@ const ReportGenerator = ({
     const now = new Date();
     let startDate, endDate;
     
+    console.log('ReportGenerator: Calculating report for dateRange:', dateRange);
+    console.log('ReportGenerator: Total reservations available:', reservations.length);
+    console.log('ReportGenerator: Sample reservation:', reservations[0]);
+    
     switch (dateRange) {
       case 'week':
         startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -56,10 +60,21 @@ const ReportGenerator = ({
         endDate = now;
     }
 
+    console.log('ReportGenerator: Date range:', { startDate: startDate.toISOString(), endDate: endDate.toISOString() });
+    
     const filteredReservations = reservations.filter(reservation => {
       const checkInDate = new Date(reservation.checkIn);
-      return checkInDate >= startDate && checkInDate <= endDate;
+      const isInRange = checkInDate >= startDate && checkInDate <= endDate;
+      console.log('ReportGenerator: Checking reservation:', {
+        guestName: reservation.guestName,
+        checkIn: reservation.checkIn,
+        checkInDate: checkInDate.toISOString(),
+        isInRange
+      });
+      return isInRange;
     });
+    
+    console.log('ReportGenerator: Filtered reservations count:', filteredReservations.length);
 
     const totalRevenue = filteredReservations.reduce((sum, r) => {
       const amount = typeof r.totalAmount === 'string' 
