@@ -12,6 +12,7 @@ const CredentialsManager = ({ onClose }) => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [credentialsInfo, setCredentialsInfo] = useState(null);
@@ -280,7 +281,7 @@ const CredentialsManager = ({ onClose }) => {
               </label>
               <div className="relative">
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showCurrentPassword ? 'text' : 'password'}
                   value={formData.currentPassword}
                   onChange={(e) => handleInputChange('currentPassword', e.target.value)}
                   className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
@@ -291,11 +292,11 @@ const CredentialsManager = ({ onClose }) => {
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                   className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600"
                   disabled={isSubmitting}
                 >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  {showCurrentPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
               {validationErrors.currentPassword && (
@@ -312,6 +313,17 @@ const CredentialsManager = ({ onClose }) => {
                 <li>• Contains at least one number</li>
                 <li>• You must confirm your current password to apply changes</li>
               </ul>
+            </div>
+
+            {/* Security Notice for Current Password */}
+            <div className="text-xs text-amber-600 bg-amber-50 p-3 rounded-lg border border-amber-200">
+              <div className="flex items-start space-x-2">
+                <Shield size={14} className="text-amber-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="font-medium mb-1">Security Notice:</p>
+                  <p>Your current password is hidden by default for security. Only reveal it when necessary and ensure no one else can see your screen.</p>
+                </div>
+              </div>
             </div>
 
             {/* Action Buttons */}
