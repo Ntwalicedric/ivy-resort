@@ -85,7 +85,9 @@ import {
   XCircle,
   LogIn,
   AlertCircle,
-  BarChart3
+  BarChart3,
+  History,
+  DollarSign
 } from 'lucide-react';
 import EnhancedFilterPanel from './components/EnhancedFilterPanel';
 import EnhancedReservationTable from './components/EnhancedReservationTable';
@@ -93,6 +95,8 @@ import CredentialsManager from './components/CredentialsManager';
 import ReservationViewModal from './components/ReservationViewModal';
 import ReservationModifyModal from './components/ReservationModifyModal';
 import ReportGenerator from './components/ReportGenerator';
+import ReservationHistory from './components/ReservationHistory';
+import PaymentTotals from './components/PaymentTotals';
 
 const AdminDashboard = () => {
   console.log('AdminDashboard: Component starting to render');
@@ -172,6 +176,8 @@ const AdminDashboard = () => {
   const [showBulkActions, setShowBulkActions] = useState(false);
   const [showCredentialsManager, setShowCredentialsManager] = useState(false);
   const [showReportGenerator, setShowReportGenerator] = useState(false);
+  const [showReservationHistory, setShowReservationHistory] = useState(false);
+  const [showPaymentTotals, setShowPaymentTotals] = useState(false);
   const [isAutoRefreshing, setIsAutoRefreshing] = useState(false);
   const [lastRefreshTime, setLastRefreshTime] = useState(new Date());
 
@@ -648,6 +654,20 @@ const AdminDashboard = () => {
                     <span className="font-semibold hidden sm:inline">Reports</span>
                   </button>
                   <button
+                    onClick={() => setShowReservationHistory(true)}
+                    className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl hover:from-purple-700 hover:to-purple-800 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-xs sm:text-sm"
+                  >
+                    <History size={16} />
+                    <span className="font-semibold hidden sm:inline">History</span>
+                  </button>
+                  <button
+                    onClick={() => setShowPaymentTotals(true)}
+                    className="bg-gradient-to-r from-green-600 to-green-700 text-white px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl hover:from-green-700 hover:to-green-800 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-xs sm:text-sm"
+                  >
+                    <DollarSign size={16} />
+                    <span className="font-semibold hidden sm:inline">Totals</span>
+                  </button>
+                  <button
                     onClick={handleClearAllReservations}
                     className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl hover:from-orange-600 hover:to-orange-700 transition-all duration-300 flex items-center space-x-1 sm:space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-xs sm:text-sm"
                     title="Clear all reservations (for testing)"
@@ -784,6 +804,16 @@ const AdminDashboard = () => {
           {/* Credentials Manager Modal */}
           {showCredentialsManager && (
             <CredentialsManager onClose={() => setShowCredentialsManager(false)} />
+          )}
+
+          {/* Reservation History Modal */}
+          {showReservationHistory && (
+            <ReservationHistory onClose={() => setShowReservationHistory(false)} />
+          )}
+
+          {/* Payment Totals Modal */}
+          {showPaymentTotals && (
+            <PaymentTotals onClose={() => setShowPaymentTotals(false)} />
           )}
         </div>
       </div>

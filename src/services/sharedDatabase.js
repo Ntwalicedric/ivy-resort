@@ -121,6 +121,28 @@ class SharedDatabaseService {
     }
   }
 
+  async getReservationHistory() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/history`);
+      const result = await this.parseResponse(response);
+      return result.success ? result.data : [];
+    } catch (error) {
+      console.warn('Shared Database Service: Failed to get reservation history:', error);
+      return [];
+    }
+  }
+
+  async getPaymentTotals() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/totals`);
+      const result = await this.parseResponse(response);
+      return result.success ? result.data : { totals: {}, count: 0, reservations: [] };
+    } catch (error) {
+      console.warn('Shared Database Service: Failed to get payment totals:', error);
+      return { totals: {}, count: 0, reservations: [] };
+    }
+  }
+
   async getRooms() {
     try {
       const response = await fetch(`${API_BASE_URL}?action=get&type=rooms`);
