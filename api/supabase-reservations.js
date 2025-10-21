@@ -34,6 +34,7 @@ function toCamelCaseReservation(row = {}) {
     country: row.country,
     status: row.status,
     emailSent: row.email_sent,
+    visibleInDashboard: row.visible_in_dashboard,
     createdAt: row.created_at,
     updatedAt: row.updated_at
   }
@@ -56,12 +57,12 @@ async function handler(req, res) {
 
     console.log('Supabase API called:', { method, path, url: req.url })
 
-    // Simple GET handler
+    // Simple GET handler - only show visible reservations by default
     if (method === 'GET' && path === '/api/supabase-reservations') {
       const { data, error } = await supabase
         .from('reservations')
         .select('*')
-        .neq('status', 'deleted') // Filter out soft-deleted records
+        .eq('visible_in_dashboard', true) // Only show visible reservations
         .order('updated_at', { ascending: false })
         .limit(50)
 
@@ -73,6 +74,58 @@ async function handler(req, res) {
         success: true,
         data: (data || []).map(toCamelCaseReservation),
         count: data?.length || 0
+      })
+    }
+
+    // GET handler for history view - show all reservations including hidden ones
+    if (method === 'GET' && path === '/api/supabase-reservations/history') {
+      const { data, error } = await supabase
+        .from('reservations')
+        .select('*')
+        .eq('visible_in_dashboard', false) // Only show hidden reservations
+        .order('updated_at', { ascending: false })
+        .limit(100)
+
+      if (error) {
+        throw error
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: (data || []).map(toCamelCaseReservation),
+        count: data?.length || 0
+      })
+    }
+
+    // GET handler for payment totals - only include visible reservations
+    if (method === 'GET' && path === '/api/supabase-reservations/totals') {
+      const { data, error } = await supabase
+        .from('reservations')
+        .select('total_amount, currency, status')
+        .eq('visible_in_dashboard', true) // Only include visible reservations
+        .in('status', ['confirmed', 'checked-in']) // Only active reservations
+
+      if (error) {
+        throw error
+      }
+
+      // Calculate totals by currency
+      const totals = {}
+      data?.forEach(reservation => {
+        const currency = reservation.currency || 'USD'
+        if (!totals[currency]) {
+          totals[currency] = 0
+        }
+        totals[currency] += parseFloat(reservation.total_amount) || 0
+      })
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          totals,
+          count: data?.length || 0,
+          reservations: data?.map(toCamelCaseReservation) || []
+        }
       })
     }
 
@@ -123,6 +176,12 @@ async function handler(req, res) {
         if (requestData.status !== undefined) updateFields.status = requestData.status
         if (requestData.emailSent !== undefined) updateFields.email_sent = requestData.emailSent
 
+        // Auto-manage visibility based on status
+        if (requestData.status !== undefined) {
+          const hiddenStatuses = ['cancelled', 'deleted', 'checked-out']
+          updateFields.visible_in_dashboard = !hiddenStatuses.includes(requestData.status)
+        }
+
         console.log('Update fields:', updateFields)
 
         const { data, error } = await supabase
@@ -151,7 +210,10 @@ async function handler(req, res) {
         // Delete operation - use soft delete (mark as deleted)
         const { data, error } = await supabase
           .from('reservations')
-          .update({ status: 'deleted' })
+          .update({ 
+            status: 'deleted',
+            visible_in_dashboard: false // Hide from dashboard when deleted
+          })
           .eq('id', requestData.id)
           .select()
 
@@ -202,7 +264,8 @@ async function handler(req, res) {
             guest_count: requestData.guestCount || 1,
             country: requestData.country || null,
             status: 'confirmed',
-            email_sent: false
+            email_sent: false,
+            visible_in_dashboard: true // New reservations are visible by default
           }])
           .select()
           .single()
