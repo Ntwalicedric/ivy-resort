@@ -22,13 +22,16 @@ const LoginForm = ({ onSubmit, loading = false, error = null }) => {
   // Get current admin credentials
   const [currentCredentials, setCurrentCredentials] = useState({
     email: 'admin@ivyresort.com',
-    password: 'IvyAdmin2024!'
+    password: '••••••••••••' // Hidden for security
   });
 
   useEffect(() => {
     // Load current credentials on component mount
     const credentials = adminCredentialsService.getCredentials();
-    setCurrentCredentials(credentials);
+    setCurrentCredentials({
+      email: credentials.email,
+      password: '••••••••••••' // Keep password hidden for security
+    });
   }, []);
 
   const handleInputChange = (field, value) => {
@@ -75,8 +78,11 @@ const LoginForm = ({ onSubmit, loading = false, error = null }) => {
     setIsSubmitting(true);
 
     try {
+      // Get actual credentials for comparison (not the hidden version)
+      const actualCredentials = adminCredentialsService.getCredentials();
+      
       // Check against current admin credentials
-      if (formData?.email === currentCredentials?.email && formData?.password === currentCredentials?.password) {
+      if (formData?.email === actualCredentials?.email && formData?.password === actualCredentials?.password) {
         const result = await login(formData);
         
         if (result?.success) {
@@ -92,7 +98,7 @@ const LoginForm = ({ onSubmit, loading = false, error = null }) => {
         }
       } else {
         setValidationErrors({ 
-          general: `Invalid credentials. Use: ${currentCredentials?.email} / ${currentCredentials?.password}` 
+          general: `Invalid credentials. Please check your email and password.` 
         });
       }
     } catch (error) {
