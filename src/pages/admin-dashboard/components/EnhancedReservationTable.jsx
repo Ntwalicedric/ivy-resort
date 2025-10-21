@@ -339,9 +339,6 @@ const EnhancedReservationTable = ({
               <th className="px-2 sm:px-4 lg:px-8 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
                 <SortButton field="guestName">Guest</SortButton>
               </th>
-              <th className="px-2 sm:px-4 lg:px-8 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                <SortButton field="roomNumber">Room ID</SortButton>
-              </th>
               <th className="px-2 sm:px-4 lg:px-8 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-gray-700 uppercase tracking-wider hidden sm:table-cell">
                 <SortButton field="checkIn">Check-in</SortButton>
               </th>
@@ -395,9 +392,6 @@ const EnhancedReservationTable = ({
                       )}
                     </div>
                   </div>
-                </td>
-                <td className="px-2 sm:px-4 lg:px-8 py-4 sm:py-6 whitespace-nowrap">
-                  <div className="room-info font-medium text-sm sm:text-base">{reservation.roomNumber || reservation.roomId}</div>
                 </td>
                 <td className="px-2 sm:px-4 lg:px-8 py-4 sm:py-6 whitespace-nowrap hidden sm:table-cell">
                   <div className="date-info flex items-center text-sm">
