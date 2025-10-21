@@ -15,7 +15,9 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
-  Clock3
+  Clock3,
+  Copy,
+  Check
 } from 'lucide-react';
 
 const ReservationViewModal = ({ 
@@ -24,6 +26,7 @@ const ReservationViewModal = ({
   reservation 
 }) => {
   const { formatRWF } = useRWFConversion();
+  const [copied, setCopied] = React.useState(false);
   
   if (!isOpen || !reservation) return null;
 
@@ -75,6 +78,17 @@ const ReservationViewModal = ({
     return formatRWF(amount);
   };
 
+  const copyReservationId = async () => {
+    const reservationId = reservation.confirmationId || reservation.id;
+    try {
+      await navigator.clipboard.writeText(reservationId);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy reservation ID:', err);
+    }
+  };
+
   const calculateNights = () => {
     if (!reservation.checkIn || !reservation.checkOut) return 0;
     const checkIn = new Date(reservation.checkIn);
@@ -113,7 +127,30 @@ const ReservationViewModal = ({
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-bold">Reservation Details</h2>
-                  <p className="text-slate-300">Reservation ID: #{reservation.id}</p>
+                  <div className="flex items-center space-x-3 mt-2">
+                    <div className="bg-white/20 rounded-lg px-4 py-2 flex items-center space-x-2">
+                      <FileText size={16} />
+                      <span className="text-slate-200 font-mono text-sm">
+                        ID: {reservation.confirmationId || reservation.id}
+                      </span>
+                      <button
+                        onClick={copyReservationId}
+                        className="p-1 hover:bg-white/30 rounded transition-colors"
+                        title="Copy Reservation ID"
+                      >
+                        {copied ? (
+                          <Check size={14} className="text-green-300" />
+                        ) : (
+                          <Copy size={14} className="text-slate-300" />
+                        )}
+                      </button>
+                    </div>
+                    {copied && (
+                      <span className="text-green-300 text-sm font-medium">
+                        Copied!
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center space-x-4">
                   {/* Status Badge */}
@@ -206,6 +243,38 @@ const ReservationViewModal = ({
                       Booking Details
                     </h3>
                     <div className="space-y-4">
+                      {/* Reservation ID */}
+                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <FileText size={18} className="text-blue-600" />
+                            <div>
+                              <p className="text-sm text-blue-600 font-medium">Reservation ID</p>
+                              <p className="font-mono text-lg font-bold text-blue-900">
+                                {reservation.confirmationId || reservation.id}
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            onClick={copyReservationId}
+                            className="flex items-center space-x-2 px-3 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg transition-colors"
+                            title="Copy Reservation ID"
+                          >
+                            {copied ? (
+                              <>
+                                <Check size={16} />
+                                <span className="text-sm font-medium">Copied!</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy size={16} />
+                                <span className="text-sm font-medium">Copy</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+
                       <div className="grid grid-cols-2 gap-4">
                         <div className="bg-slate-50 rounded-xl p-4">
                           <div className="flex items-center space-x-3">
