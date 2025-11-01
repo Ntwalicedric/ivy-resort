@@ -190,7 +190,28 @@ const CredentialsManager = ({ onClose }) => {
             </div>
           )}
 
-          
+          {/* Current Credentials Display */}
+          <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
+            <div className="flex items-center space-x-2 mb-3">
+              <Shield size={16} className="text-slate-600" />
+              <h4 className="text-sm font-semibold text-slate-700">Current Credentials</h4>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-slate-600">Email:</span>
+                <span className="text-sm font-mono text-slate-800">{credentialsInfo?.email || 'Loading...'}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-slate-600">Password:</span>
+                <span className="text-sm font-mono text-slate-800">••••••••••••</span>
+              </div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-slate-200">
+              <p className="text-xs text-slate-500">
+                Your password is hidden for security. Enter it below to verify changes.
+              </p>
+            </div>
+          </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
