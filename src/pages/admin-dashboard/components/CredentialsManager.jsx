@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, EyeOff, Save, RotateCcw, Shield, AlertCircle, CheckCircle } from 'lucide-react';
+import { Eye, EyeOff, Save, Shield, AlertCircle, CheckCircle } from 'lucide-react';
 import adminCredentialsService from '../../../services/adminCredentialsService';
 import { useAuth } from '../../../components/ui/AuthenticationGuard';
 
@@ -129,23 +129,6 @@ const CredentialsManager = ({ onClose }) => {
       showNotification('An error occurred while updating credentials', 'error');
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  const handleReset = () => {
-    if (window.confirm('Are you sure you want to reset to default credentials? This action cannot be undone.')) {
-      const result = adminCredentialsService.resetToDefault();
-      if (result.success) {
-        showNotification('Credentials reset to default successfully!', 'success');
-        loadCurrentCredentials();
-        setFormData(prev => ({
-          ...prev,
-          password: '',
-          confirmPassword: ''
-        }));
-      } else {
-        showNotification(result.error || 'Failed to reset credentials', 'error');
-      }
     }
   };
 
@@ -348,20 +331,11 @@ const CredentialsManager = ({ onClose }) => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex space-x-3 pt-4">
-              <button
-                type="button"
-                onClick={handleReset}
-                disabled={isSubmitting}
-                className="flex-1 px-4 py-2 text-slate-700 bg-slate-200 rounded-lg hover:bg-slate-300 transition-colors duration-200 flex items-center justify-center space-x-2 disabled:opacity-50"
-              >
-                <RotateCcw size={16} />
-                <span>Reset to Default</span>
-              </button>
+            <div className="pt-4">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center space-x-2 disabled:opacity-50"
+                className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center space-x-2 disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
