@@ -133,9 +133,9 @@ const CredentialsManager = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all duration-300 scale-100">
-        <div className="p-6">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-6">
+      <div className="bg-white rounded-2xl shadow-2xl w-full h-full sm:h-auto max-w-xl sm:max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100">
+        <div className="p-5 sm:p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
